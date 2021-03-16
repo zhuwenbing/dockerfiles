@@ -11,4 +11,4 @@
 
 ### Nginx
 1. Reference to [hermanbanken/Dockerfile](https://gist.github.com/hermanbanken/96f0ff298c162a522ddbba44cad31081).
-1. Add headers-more-nginx-module and nginx-dav-ext-module.
+1. Add brotli, dav-ext, fancyindex and headers-more modules.
