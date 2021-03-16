@@ -1,0 +1,42 @@
+FROM alpine
+
+MAINTAINER KissIce Chu <i@kissice.cc>
+
+ENV MONGODB_VERSION 4.0.23
+ENV GLIBC_VERSION 2.33-r0
+
+RUN addgroup -S mongodb && adduser -S -G mongodb mongodb
+
+COPY ./scripts/mongo/run.sh /opt
+RUN chmod +x /opt/run.sh
+
+RUN set -eux; \
+    apk update; \
+    apk add --no-cache \
+        curl \
+        libgcc \
+        libstdc++ \
+        tzdata \
+    ; \
+    if ! command -v ps > /dev/null; then \
+		  apk add --no-cache procps; \
+	  fi; \
+    cd /tmp; \
+    curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_VERSION}.tgz | tar xz; \
+    mv mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongo mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongod /usr/local/bin/; \
+    curl -SLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk; \
+    apk add --allow-untrusted glibc-${GLIBC_VERSION}.apk; \
+    mv /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /usr/glibc-compat/lib/ld-linux-x86-64.so; \
+    ln -s /usr/glibc-compat/lib/ld-linux-x86-64.so /usr/glibc-compat/lib/ld-linux-x86-64.so.2; \
+    curl -SLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk; \
+    apk add --allow-untrusted glibc-bin-${GLIBC_VERSION}.apk; \
+    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib; \
+    apk del curl; \
+    rm -rf /var/cache/apk/*; \
+    rm -rf /tmp/*
+
+VOLUME [ "/data/db" ]
+EXPOSE 27017
+
+ENTRYPOINT [ "/opt/run.sh" ]
+CMD [ "mongod", "--bind_ip", "0.0.0.0" ]

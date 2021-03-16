@@ -1,0 +1,54 @@
+FROM nginx:alpine AS builder
+
+# nginx:alpine contains NGINX_VERSION environment variable, like so:
+# ENV NGINX_VERSION 1.15.0
+
+# Our NCHAN version
+ENV HEADERS_MORE_VERSION=0.33 \
+    DAV_EXT_VERSION=3.0.0
+
+# Download sources
+RUN set -eux; \
+    wget "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
+        -O nginx.tar.gz; \
+    wget "https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz" \
+        -O headers-more-nginx-module.tar.gz; \
+    wget "https://github.com/arut/nginx-dav-ext-module/archive/v${DAV_EXT_VERSION}.tar.gz" \
+        -O nginx-dav-ext-module.tar.gz
+
+# For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
+RUN set -ex; \
+    apk add --no-cache --virtual .build-deps \
+        gcc \
+        libc-dev \
+        make \
+        openssl-dev \
+        pcre-dev \
+        zlib-dev \
+        linux-headers \
+        libxslt-dev \
+        gd-dev \
+        geoip-dev \
+        perl-dev \
+        libedit-dev \
+        mercurial \
+        bash \
+        alpine-sdk \
+        findutils
+
+# Reuse same cli arguments as the nginx:alpine image used to build
+RUN set -eux; \
+    # sed 's/'\''/"/g'
+    CONFARGS=$(nginx -V 2>&1 | sed -n -e 's/^.*arguments: //p'); \
+    tar -zxC /tmp -f nginx.tar.gz; \
+    tar -zxC /tmp -f headers-more-nginx-module.tar.gz; \
+    tar -zxC /tmp -f nginx-dav-ext-module.tar.gz; \
+    cd /tmp/nginx-$NGINX_VERSION; \
+    sh -c "./configure --with-compat $CONFARGS --add-dynamic-module=/tmp/headers-more-nginx-module-$HEADERS_MORE_VERSION --add-dynamic-module=/tmp/nginx-dav-ext-module-$DAV_EXT_VERSION"; \
+    make modules
+
+FROM nginx:alpine
+# Extract the dynamic modules from the builder image
+COPY --from=builder \
+    /tmp/nginx-${NGINX_VERSION}/objs/*_module.so \
+    /usr/lib/nginx/modules/
