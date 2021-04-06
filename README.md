@@ -4,6 +4,7 @@
 1. Add ca-certificates for using HTTPS.
 1. Add curl instead of curl in busybox.
 1. Add tzdate for setting the custom timezone.
+1. Add wget instead of busybox wget.
 
 ### Mongo
 1. Reference to [mkscs/docker-alpine-mongodb](https://github.com/mkscs/docker-alpine-mongodb).
