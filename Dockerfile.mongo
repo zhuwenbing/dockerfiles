@@ -19,8 +19,8 @@ RUN set -eux; \
         tzdata \
     ; \
     if ! command -v ps > /dev/null; then \
-		  apk add --no-cache procps; \
-	  fi; \
+      apk add --no-cache procps; \
+    fi; \
     cd /tmp; \
     curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_VERSION}.tgz | tar xz; \
     mv mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongo mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongod /usr/local/bin/; \
