@@ -13,3 +13,7 @@
 ### [Nginx](https://github.com/zhuwenbing/dockerfiles/blob/master/Dockerfile.nginx)
 1. Reference to [hermanbanken/Dockerfile](https://gist.github.com/hermanbanken/96f0ff298c162a522ddbba44cad31081).
 1. Add brotli, dav-ext, fancyindex and headers-more modules.
+
+### [PHP-FPM](https://github.com/zhuwenbing/dockerfiles/blob/master/Dockerfile.php-fpm)
+1. Base on the image 'php:5-fpm-alpine'.
+1. Add php exts of 'gd', 'zip' and 'mysql'.
