@@ -2,7 +2,7 @@ FROM alpine
 
 MAINTAINER KissIce Chu <i@kissice.cc>
 
-ENV MONGODB_VERSION 4.0.23
+ENV MONGODB_VERSION 4.0.24
 ENV GLIBC_VERSION 2.33-r0
 
 RUN addgroup -S mongodb && adduser -S -G mongodb mongodb
