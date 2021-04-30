@@ -7,6 +7,7 @@ ENV MONGODB_VERSION=4.2-latest
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN set -euxo pipefail; \
+    chmod +x /usr/local/bin/docker-entrypoint.sh; \
     # backwards compat
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
     yum clean all; \
