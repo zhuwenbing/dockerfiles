@@ -2,15 +2,14 @@ FROM alpine
 
 MAINTAINER KissIce Chu <i@kissice.cc>
 
-ENV MONGODB_VERSION=4.0.24 \
+ENV MONGODB_VERSION=4.0-latest \
     GLIBC_VERSION=2.33-r0
 
-RUN addgroup -S mongodb && adduser -S -G mongodb mongodb
-
-COPY ./scripts/mongo/run.sh /opt
-RUN chmod +x /opt/run.sh
+COPY run.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN set -euxo pipefail; \
+    # backwards compat
+    ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
     apk update; \
     apk add --no-cache \
         curl \
@@ -21,10 +20,11 @@ RUN set -euxo pipefail; \
     if ! command -v ps > /dev/null; then \
       apk add --no-cache procps; \
     fi; \
+    addgroup -S mongodb && adduser -S mongodb -G mongodb; \
+    cd /tmp && mkdir -p mongodb-linux-x86_64; \
+    curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-x86_64 --strip-components 1; \
+    mv mongodb-linux-x86_64/bin/mongo mongodb-linux-x86_64/bin/mongod /usr/local/bin/; \
     wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub; \
-    cd /tmp; \
-    curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_VERSION}.tgz | tar xz; \
-    mv mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongo mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongod /usr/local/bin/; \
     curl -SLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk; \
     #apk add --allow-untrusted glibc-${GLIBC_VERSION}.apk; \
     apk add glibc-${GLIBC_VERSION}.apk; \
@@ -42,5 +42,5 @@ RUN set -euxo pipefail; \
 VOLUME [ "/data/db" ]
 EXPOSE 27017
 
-ENTRYPOINT [ "/opt/run.sh" ]
+ENTRYPOINT [ "docker-entrypoint.sh" ]
 CMD [ "mongod", "--bind_ip", "0.0.0.0" ]

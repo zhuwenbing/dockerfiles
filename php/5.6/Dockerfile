@@ -1,4 +1,4 @@
-FROM php:5-fpm-alpine
+FROM php:5.6-fpm-alpine
 
 MAINTAINER KissIce Chu <i@kissice.cc>
 
