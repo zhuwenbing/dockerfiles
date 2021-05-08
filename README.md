@@ -6,6 +6,16 @@
 1. Add tzdate for setting the custom timezone.
 1. Add wget instead of busybox wget.
 
+### [AmazonLinux](https://github.com/zhuwenbing/dockerfiles/blob/master/amazonlinux/2/Dockerfile)
+1. Based on the official image AmazonLinux2.
+1. Add some custom needed software packages.
+1. Add jdk6 to run some Java projects.
+
+### [CentOS](https://github.com/zhuwenbing/dockerfiles/blob/master/centos/6/Dockerfile)
+1. Based on the official image CentOS6.10.
+1. Add some custom needed software packages.
+1. Add jdk6 to run some Java projects.
+
 ### [Mongo](https://github.com/zhuwenbing/dockerfiles/blob/master/mongo/Dockerfile)
 1. Reference to [mkscs/docker-alpine-mongodb](https://github.com/mkscs/docker-alpine-mongodb).
 1. Reference to [mvertes/docker-alpine-mongo](https://github.com/mvertes/docker-alpine-mongo).
