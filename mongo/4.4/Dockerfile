@@ -2,7 +2,8 @@ FROM amazonlinux:2
 
 MAINTAINER KissIce Chu <i@kissice.cc>
 
-ENV MONGODB_VERSION=4.4-latest
+ENV MONGODB_VERSION=4.4-latest \
+    GOSU_VERSION=1.12
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 
@@ -10,16 +11,26 @@ RUN set -euxo pipefail; \
     chmod +x /usr/local/bin/docker-entrypoint.sh; \
     # backwards compat
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
+    # Install gosu.  https://github.com/tianon/gosu
+    gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+    curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64"; \
+    curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64.asc"; \
+    gpg --verify /usr/local/bin/gosu.asc; \
+    rm /usr/local/bin/gosu.asc; \
+    rm -r /root/.gnupg/; \
+    chmod +x /usr/local/bin/gosu; \
+    # Verify that the binary works
+    gosu --version; \
+    gosu nobody true; \
+    # Install mongodb.
     yum clean all; \
     yum makecache fast; \
     yum update -y; \
     yum install -y --setopt=protected_multilib=false \
         gzip \
-        htop \
         shadow-utils \
         tar \
         tzdata \
-        util-linux \
     ; \
     groupadd -r mongodb && useradd -r mongodb -g mongodb; \
     cd /tmp && mkdir -p mongodb-linux-x86_64; \
@@ -31,7 +42,7 @@ RUN set -euxo pipefail; \
       tar \
     ; \
     yum clean all; \
-    rm -rf /tmp/*;
+    rm -rf /tmp/*
 
 VOLUME [ "/data/db" ]
 EXPOSE 27017
