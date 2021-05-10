@@ -19,6 +19,7 @@ RUN set -euxo pipefail; \
         shadow-utils \
         tar \
         tzdata \
+        util-linux \
     ; \
     groupadd -r mongodb && useradd -r mongodb -g mongodb; \
     cd /tmp && mkdir -p mongodb-linux-x86_64; \
