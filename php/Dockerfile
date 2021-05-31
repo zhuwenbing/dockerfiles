@@ -22,7 +22,7 @@ RUN set -eux; \
         libpng \
         libzip \
         fcgi \
-     ; \
+    ; \
     # clean
     rm -rf /var/cache/apk/*; \
     rm -rf /tmp/*; \
@@ -31,3 +31,5 @@ RUN set -eux; \
     # install healthcheck
     wget -O /usr/local/bin/php-fpm-healthcheck https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
     chmod +x /usr/local/bin/php-fpm-healthcheck
+
+    HEALTHCHECK --interval=1m30s --timeout=3s CMD php-fpm-healthcheck && exit $? || exit 1
