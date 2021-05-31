@@ -35,8 +35,8 @@
 ```script
 healthcheck:
   # [Ping mode](https://github.com/renatomefi/php-fpm-healthcheck#ping-mode)
-  test: [ "CMD", "php-fpm-healthcheck", "&&", "exit", "$$?" ]
+  test: [ "CMD", "php-fpm-healthcheck", "&&", "exit", "$$?", "||", "exit", "1" ]
   interval: 1m30s
-  timeout: 10s
+  timeout: 3s
 ```
 ##### More usages see [php-fpm-healthcheck](https://github.com/renatomefi/php-fpm-healthcheck).
