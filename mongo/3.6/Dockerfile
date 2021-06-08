@@ -4,7 +4,7 @@ MAINTAINER KissIce Chu <i@kissice.cc>
 
 ENV MONGODB_VERSION=3.6-latest \
     GLIBC_VERSION=2.33-r0 \
-    GOSU_VERSION=1.12
+    GOSU_VERSION=1.13
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 

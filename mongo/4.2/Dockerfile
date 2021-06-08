@@ -3,7 +3,7 @@ FROM amazonlinux:2
 MAINTAINER KissIce Chu <i@kissice.cc>
 
 ENV MONGODB_VERSION=4.2-latest \
-    GOSU_VERSION=1.12
+    GOSU_VERSION=1.13
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 
