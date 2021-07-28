@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.1-rc-fpm-alpine
 
 MAINTAINER KissIce Chu <i@kissice.cc>
 
