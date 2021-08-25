@@ -3,8 +3,8 @@ FROM alpine
 MAINTAINER KissIce Chu <i@kissice.cc>
 
 ENV MONGODB_VERSION=3.6-latest \
-    GLIBC_VERSION=2.33-r0 \
-    GOSU_VERSION=1.13
+    GLIBC_VERSION=2.34-r0 \
+    GOSU_VERSION=1.14
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 
