@@ -8,6 +8,7 @@ RUN set -eux; \
         bash \
         bind-tools \
         ca-certificates \
+        coreutils \
         curl \
         tzdata \
         wget \
