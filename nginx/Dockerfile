@@ -13,7 +13,7 @@ RUN set -ex; \
         libc-dev \
         make \
         openssl-dev \
-        pcre-dev \
+        pcre2-dev \
         zlib-dev \
         linux-headers \
         libxslt-dev \
@@ -21,7 +21,6 @@ RUN set -ex; \
         geoip-dev \
         perl-dev \
         libedit-dev \
-        mercurial \
         bash \
         alpine-sdk \
         findutils
