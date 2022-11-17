@@ -23,7 +23,7 @@ jobs:
           IMAGE_NAME=php
           VERSION=${{ github.event.inputs.version }}
           TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm"
-          echo "build_args=PHP-FPM_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "build_args=PHP_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
