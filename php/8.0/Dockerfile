@@ -1,6 +1,8 @@
-FROM php:8.0-fpm-alpine
+ARG PHP_BUILD_VERSION=8.0
 
-MAINTAINER KissIce Chu <i@kissice.cc>
+FROM --platform=$TARGETPLATFORM php:$PHP_BUILD_VERSION-fpm-alpine
+
+LABEL maintainer="Mr. Chu"
 
 RUN set -eux; \
     apk upgrade --update; \
