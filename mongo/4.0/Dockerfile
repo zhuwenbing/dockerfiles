@@ -1,6 +1,6 @@
 FROM alpine
 
-MAINTAINER KissIce Chu <i@kissice.cc>
+LABEL maintainer="Mr. Chu"
 
 ENV MONGODB_VERSION=4.0-latest \
     GLIBC_VERSION=2.33-r0 \
