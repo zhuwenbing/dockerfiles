@@ -1,10 +1,13 @@
-FROM nginx:alpine AS builder
+ARG NGINX_BUILD_VERSION=stable
 
-# nginx:alpine contains NGINX_VERSION environment variable, like so:
-# ENV NGINX_VERSION 1.15.0
+FROM --platform=$TARGETPLATFORM nginx:$NGINX_BUILD_VERSION-alpine AS builder
 
-ENV BROTLI_VERSION=1.0.0rc \
-    HEADERS_MORE_VERSION=0.33
+# nginx:xxx-alpine contains NGINX_VERSION environment variable, like so:
+# ENV NGINX_VERSION 1.23.2
+
+# ENV BROTLI_VERSION=1.0.0rc \
+#    HEADERS_MORE_VERSION=0.33
+ENV HEADERS_MORE_VERSION=0.34
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
 RUN set -ex; \
@@ -27,7 +30,8 @@ RUN set -ex; \
 
 RUN set -exo pipefail; \
     cd /tmp; \
-    git clone --branch v${BROTLI_VERSION} https://github.com/google/ngx_brotli.git; \
+    # git clone --branch v${BROTLI_VERSION} https://github.com/google/ngx_brotli.git; \
+    git clone https://github.com/google/ngx_brotli.git; \
     git clone --branch v${HEADERS_MORE_VERSION} https://github.com/openresty/headers-more-nginx-module.git; \
     wget "https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
         -O - | tar -xzf -
@@ -41,7 +45,7 @@ RUN set -euxo pipefail; \
     /bin/sh -c "./configure $CONFARGS --with-compat --add-dynamic-module=/tmp/ngx_brotli --add-dynamic-module=/tmp/headers-more-nginx-module"; \
     make modules
 
-FROM nginx:alpine
+FROM --platform=$TARGETPLATFORM nginx:$NGINX_BUILD_VERSION-alpine
 # Extract the dynamic modules from the builder image
 COPY --from=builder \
     /tmp/nginx-${NGINX_VERSION}/objs/*_module.so \
