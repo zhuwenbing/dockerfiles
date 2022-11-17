@@ -49,7 +49,9 @@ RUN set -euxo pipefail; \
     wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub; \
     curl -SLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk; \
     #apk add --allow-untrusted glibc-${GLIBC_VERSION}.apk; \
-    apk add glibc-${GLIBC_VERSION}.apk; \
+    # 2022/11/17 - Fix error. See: https://github.com/sgerrand/alpine-pkg-glibc/issues/185
+    apk add --force-overwrite glibc-${GLIBC_VERSION}.apk; \
+    apk fix --force-overwrite alpine-baselayout-data; \
     # Eliminate '/usr/glibc-compat/lib/ld-linux-x86-64.so.2 is not a symbolic link' tips.
     mv /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /usr/glibc-compat/lib/ld-linux-x86-64.so; \
     ln -s /usr/glibc-compat/lib/ld-linux-x86-64.so /usr/glibc-compat/lib/ld-linux-x86-64.so.2; \
