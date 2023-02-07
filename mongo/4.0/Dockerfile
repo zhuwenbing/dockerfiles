@@ -4,7 +4,7 @@ LABEL maintainer="Mr. Chu"
 
 ENV MONGODB_VERSION=4.0-latest \
     GLIBC_VERSION=2.33-r0 \
-    GOSU_VERSION=1.14
+    GOSU_VERSION=1.16
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 
