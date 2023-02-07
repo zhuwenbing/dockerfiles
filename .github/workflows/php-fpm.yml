@@ -42,7 +42,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}
           file: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}/Dockerfile
