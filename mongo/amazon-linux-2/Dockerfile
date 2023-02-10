@@ -1,8 +1,10 @@
+ARG MONGO_BUILD_VERSION=4.2
+
 FROM amazonlinux:2
 
 LABEL maintainer="Mr. Chu"
 
-ENV MONGODB_VERSION=4.4-latest \
+ENV MONGODB_VERSION=$MONGO_BUILD_VERSION-latest \
     GOSU_VERSION=1.16
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
