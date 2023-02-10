@@ -45,7 +45,7 @@ jobs:
         if: github.event.inputs.version < 4.2
         uses: docker/build-push-action@v4
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}
+          context: ./${{ steps.prepare.outputs.image_name }}
           file: ./${{ steps.prepare.outputs.image_name }}/alpine/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
@@ -56,7 +56,7 @@ jobs:
         if: github.event.inputs.version > 4.0
         uses: docker/build-push-action@v4
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}
+          context: ./${{ steps.prepare.outputs.image_name }}
           file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux-2/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
