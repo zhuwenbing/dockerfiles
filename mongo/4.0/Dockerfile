@@ -7,11 +7,14 @@ ENV MONGODB_VERSION=4.0-latest \
     GOSU_VERSION=1.16
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
+COPY check.sh /usr/local/bin/docker-healthcheck.sh
 
 RUN set -euxo pipefail; \
     chmod +x /usr/local/bin/docker-entrypoint.sh; \
+    chmod +x /usr/local/bin/docker-healthcheck.sh; \
     # backwards compat
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
+    ln -s /usr/local/bin/docker-healthcheck.sh /healthcheck.sh; \
     apk update; \
     if ! command -v ps > /dev/null; then \
       apk add --no-cache procps; \
@@ -71,3 +74,5 @@ EXPOSE 27017
 
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 CMD [ "mongod", "--bind_ip", "0.0.0.0" ]
+
+HEALTHCHECK --timeout=3s CMD [ "docker-healthcheck.sh" ]
