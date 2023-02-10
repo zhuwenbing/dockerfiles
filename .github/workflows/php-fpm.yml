@@ -48,12 +48,23 @@ jobs:
           context: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}
           file: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm64,linux/ppc64le
           build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
 
-      - name: Build and push (PHP 7.0+) Docker image
-        if: github.event.inputs.version >= 7.0
+      - name: Build and push (PHP 7.0) Docker image
+        if: github.event.inputs.version == 7.0
+        uses: docker/build-push-action@v4
+        with:
+          context: ./${{ steps.prepare.outputs.image_name }}
+          file: ./${{ steps.prepare.outputs.image_name }}/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm64,linux/ppc64le
+          build-args: ${{ steps.prepare.outputs.build_args }}
+          tags: ${{ steps.prepare.outputs.tags }}
+
+      - name: Build and push (PHP 7.1+) Docker image
+        if: github.event.inputs.version >= 7.1
         uses: docker/build-push-action@v4
         with:
           context: ./${{ steps.prepare.outputs.image_name }}
