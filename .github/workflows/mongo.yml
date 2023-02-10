@@ -41,11 +41,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push MongoDB's Docker image (based on Alpine)
+        if: github.event.inputs.version < 4.2
         uses: docker/build-push-action@v4
         with:
           context: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}
-          file: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}/Dockerfile
+          file: ./${{ steps.prepare.outputs.image_name }}/alpine/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64
+          build-args: ${{ steps.prepare.outputs.build_args }}
+          tags: ${{ steps.prepare.outputs.tags }}
+
+      - name: Build and push MongoDB's Docker image (based on Amazon Linux 2)
+        if: github.event.inputs.version > 4.0
+        uses: docker/build-push-action@v4
+        with:
+          context: ./${{ steps.prepare.outputs.image_name }}/${{ steps.prepare.outputs.version }}
+          file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux-2/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
           build-args: ${{ steps.prepare.outputs.build_args }}

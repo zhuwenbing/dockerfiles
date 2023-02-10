@@ -1,6 +1,6 @@
-FROM php:5.6-fpm-alpine
+FROM --platform=$TARGETPLATFORM php:5.6-fpm-alpine
 
-MAINTAINER KissIce Chu <i@kissice.cc>
+LABEL maintainer="Mr. Chu"
 
 RUN set -eux; \
     apk upgrade --update; \
@@ -33,4 +33,4 @@ RUN set -eux; \
     wget -O /usr/local/bin/php-fpm-healthcheck https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
     chmod +x /usr/local/bin/php-fpm-healthcheck
 
-HEALTHCHECK --interval=1m30s --timeout=3s CMD php-fpm-healthcheck && exit $? || exit 1
+HEALTHCHECK --timeout=3s CMD php-fpm-healthcheck || exit 1

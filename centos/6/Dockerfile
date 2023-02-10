@@ -1,6 +1,6 @@
 FROM centos:6.10
 
-MAINTAINER KissIce Chu <i@kissice.cc>
+LABEL maintainer="Mr. Chu"
 
 ADD root.tgz /
 COPY CentOS-Base.repo epel.repo /etc/yum.repos.d/

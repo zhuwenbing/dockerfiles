@@ -1,6 +1,8 @@
-FROM php:fpm-alpine
+ARG PHP_BUILD_VERSION=8.0
 
-MAINTAINER KissIce Chu <i@kissice.cc>
+FROM --platform=$TARGETPLATFORM php:$PHP_BUILD_VERSION-fpm-alpine
+
+LABEL maintainer="Mr. Chu"
 
 RUN set -eux; \
     apk upgrade --update; \
@@ -32,4 +34,4 @@ RUN set -eux; \
     wget -O /usr/local/bin/php-fpm-healthcheck https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck; \
     chmod +x /usr/local/bin/php-fpm-healthcheck
 
-    HEALTHCHECK --interval=1m30s --timeout=3s CMD php-fpm-healthcheck && exit $? || exit 1
+HEALTHCHECK --timeout=3s CMD php-fpm-healthcheck || exit 1

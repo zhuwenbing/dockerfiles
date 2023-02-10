@@ -1,16 +1,19 @@
 FROM amazonlinux:2
 
-MAINTAINER KissIce Chu <i@kissice.cc>
+LABEL maintainer="Mr. Chu"
 
-ENV MONGODB_VERSION=latest \
-    GOSU_VERSION=1.14
+ENV MONGODB_VERSION=4.4-latest \
+    GOSU_VERSION=1.16
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
+COPY check.sh /usr/local/bin/docker-healthcheck.sh
 
 RUN set -euxo pipefail; \
     chmod +x /usr/local/bin/docker-entrypoint.sh; \
+    chmod +x /usr/local/bin/docker-healthcheck.sh; \
     # backwards compat
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
+    ln -s /usr/local/bin/docker-healthcheck.sh /healthcheck.sh; \
     # Install gosu.  https://github.com/tianon/gosu
     gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
     curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64"; \
@@ -34,7 +37,7 @@ RUN set -euxo pipefail; \
     ; \
     groupadd -r mongodb && useradd -r mongodb -g mongodb; \
     cd /tmp && mkdir -p mongodb-linux-x86_64; \
-    curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-amazon2-${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-x86_64 --strip-components 1; \
+    curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-amazon2-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-x86_64 --strip-components 1; \
     mv mongodb-linux-x86_64/bin/mongo mongodb-linux-x86_64/bin/mongod /usr/local/bin/; \
     yum remove -y \
       gzip \
@@ -49,3 +52,5 @@ EXPOSE 27017
 
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 CMD [ "mongod", "--bind_ip", "0.0.0.0" ]
+
+HEALTHCHECK --timeout=3s CMD [ "docker-healthcheck.sh" ]
