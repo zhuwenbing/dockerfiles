@@ -54,7 +54,7 @@ RUN set -euxo pipefail; \
     if [ "$TARGETARCH" = "amd64" ] ; then ARCHITECTURE="x86_64" ; else ARCHITECTURE="aarch64" ; fi; \
     cd /tmp && mkdir -p mongodb-linux-${ARCHITECTURE}; \
     curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-${ARCHITECTURE}-amazon2-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-${ARCHITECTURE} --strip-components 1; \
-    mv mongodb-linux-${ARCHITECTURE}/bin/* /usr/local/bin/; \
+    mv mongodb-linux-${ARCHITECTURE}/bin/mongod /usr/local/bin/; \
     yum remove -y \
       gzip \
       shadow-utils \
