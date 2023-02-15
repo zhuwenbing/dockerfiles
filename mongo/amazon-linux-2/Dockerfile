@@ -44,7 +44,6 @@ RUN set -euxo pipefail; \
     yum update -y; \
     yum install -y --setopt=protected_multilib=false \
         gzip \
-        mongodb-mongosh \
         shadow-utils \
         tar \
         tzdata \
@@ -54,8 +53,10 @@ RUN set -euxo pipefail; \
     if [ "$TARGETARCH" = "amd64" ] ; then ARCHITECTURE="x86_64" ; else ARCHITECTURE="aarch64" ; fi; \
     cd /tmp && mkdir -p mongodb-linux-${ARCHITECTURE}; \
     curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-${ARCHITECTURE}-amazon2-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-${ARCHITECTURE} --strip-components 1; \
-    mv mongodb-linux-${ARCHITECTURE}/bin/mongod /usr/local/bin/; \
-    [ -f mongodb-linux-${ARCHITECTURE}/bin/mongo ] && mv mongodb-linux-${ARCHITECTURE}/bin/mongo /usr/local/bin/; \
+    cd mongodb-linux-${ARCHITECTURE}/bin; \
+    mv mongod /usr/local/bin/; \
+    [ -f mongo ] && mv mongo /usr/local/bin/; \
+    [ -f mongo ] || yum install -y mongodb-mongosh; \
     yum remove -y \
       gzip \
       shadow-utils \
