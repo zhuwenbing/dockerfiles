@@ -59,7 +59,7 @@ jobs:
           context: ./${{ steps.prepare.outputs.image_name }}
           file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux-2/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64/v8
           build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
 
