@@ -55,8 +55,8 @@ RUN set -euxo pipefail; \
     curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-${ARCHITECTURE}-amazon2-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-${ARCHITECTURE} --strip-components 1; \
     cd mongodb-linux-${ARCHITECTURE}/bin; \
     mv mongod /usr/local/bin/; \
-    [ -f mongo ] && mv mongo /usr/local/bin/; \
     [ -f mongo ] || yum install -y mongodb-mongosh; \
+    [ -f mongo ] && mv mongo /usr/local/bin/; \
     yum remove -y \
       gzip \
       shadow-utils \
