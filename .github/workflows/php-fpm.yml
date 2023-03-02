@@ -7,6 +7,12 @@ on:
         description: "version"
         required: true
         default: "8.0"
+        type: choice
+        options:
+        - "8.0"
+        - "7.4"
+        - "7.0"
+        - "5.6"
 
 jobs:
   build:
