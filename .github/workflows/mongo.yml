@@ -7,6 +7,14 @@ on:
         description: "version"
         required: true
         default: "4.0"
+        type: choice
+        options:
+        - "6.0"
+        - "5.0"
+        - "4.4"
+        - "4.2"
+        - "4.0"
+        - "3.6"
 
 jobs:
   build:
