@@ -9,16 +9,33 @@ on:
         default: "4.0"
         type: choice
         options:
-        - "6.0"
-        - "5.0"
-        - "4.4"
-        - "4.2"
-        - "4.0"
-        - "3.6"
+          - "6.0"
+          - "5.0"
+          - "4.4"
+          - "4.2"
+          - "4.0"
+          - "3.6"
+    schedule:
+      - cron: "0 1 * * *"
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      needs-updating: ${{ steps.check.outputs.needs-updating }}
+    steps:
+      - name: Check if update available
+        id: check
+        uses: lucacome/docker-image-update-checker@v1
+        with:
+          base-image: alpine:latest
+          image: ${{ secrets.DOCKER_USERNAME }}/mongo:${{ github.event.inputs.version }}
+          platforms: linux/amd64
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    if: needs.check.outputs.needs-updating == "true"
 
     steps:
       - name: Checkout code

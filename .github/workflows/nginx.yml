@@ -9,11 +9,28 @@ on:
         default: "1.23"
         type: choice
         options:
-        - "1.23"
+          - "1.23"
+    schedule:
+      - cron: "0 2 * * *"
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      needs-updating: ${{ steps.check.outputs.needs-updating }}
+    steps:
+      - name: Check if update available
+        id: check
+        uses: lucacome/docker-image-update-checker@v1
+        with:
+          base-image: nginx:${{ github.event.inputs.version }}-alpine
+          image: ${{ secrets.DOCKER_USERNAME }}/nginx:${{ github.event.inputs.version }}
+          platforms: linux/amd64
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    if: needs.check.outputs.needs-updating == "true"
 
     steps:
       - name: Checkout code

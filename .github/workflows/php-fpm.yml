@@ -9,14 +9,31 @@ on:
         default: "8.0"
         type: choice
         options:
-        - "8.0"
-        - "7.4"
-        - "7.0"
-        - "5.6"
+          - "8.0"
+          - "7.4"
+          - "7.0"
+          - "5.6"
+    schedule:
+      - cron: "0 3 * * *"
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      needs-updating: ${{ steps.check.outputs.needs-updating }}
+    steps:
+      - name: Check if update available
+        id: check
+        uses: lucacome/docker-image-update-checker@v1
+        with:
+          base-image: php:${{ github.event.inputs.version }}-fpm-alpine
+          image: ${{ secrets.DOCKER_USERNAME }}/php:${{ github.event.inputs.version }}-fpm
+          platforms: linux/amd64
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    if: needs.check.outputs.needs-updating == "true"
 
     steps:
       - name: Checkout code
