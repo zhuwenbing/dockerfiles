@@ -33,7 +33,7 @@ jobs:
   build:
     needs: check
     runs-on: ubuntu-latest
-    if: needs.check.outputs.needs-updating == "true"
+    if: needs.check.outputs.needs-updating == 'true'
 
     steps:
       - name: Checkout code
