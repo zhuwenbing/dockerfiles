@@ -22,20 +22,32 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      needs-updating: ${{ steps.check.outputs.needs-updating }}
+      needs-updating-1: ${{ steps.check-1.outputs.needs-updating }}
+      needs-updating-2: ${{ steps.check-2.outputs.needs-updating }}
     steps:
-      - name: Check if update available
-        id: check
+      - name: Check if Alpine update available
+        if: github.event.inputs.version <= 4.0
+        id: check-1
         uses: lucacome/docker-image-update-checker@v1
         with:
           base-image: alpine:latest
+          image: ${{ secrets.DOCKER_USERNAME }}/mongo:${{ github.event.inputs.version }}
+          platforms: linux/amd64
+      - name: Check if Amazon Linux update available
+        if: github.event.inputs.version >= 4.2
+        id: check-2
+        uses: lucacome/docker-image-update-checker@v1
+        with:
+          base-image: amazonlinux:2
           image: ${{ secrets.DOCKER_USERNAME }}/mongo:${{ github.event.inputs.version }}
           platforms: linux/amd64
 
   build:
     needs: check
     runs-on: ubuntu-latest
-    if: needs.check.outputs.needs-updating == 'true'
+    if: |
+      needs.check.outputs.needs-updating-1 == 'true' ||
+      needs.check.outputs.needs-updating-2 == 'true'
 
     steps:
       - name: Checkout code
