@@ -5,9 +5,6 @@ on:
     schedule:
       - cron: "0 1 * * *"
 
-env:
-  MONGODB_VERSIONS: '["4.0", "3.6"]'
-
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -29,7 +26,7 @@ jobs:
 
     strategy:
       matrix:
-        version: ${{ fromJson(env.MONGODB_VERSIONS) }}
+        version: ["4.0", "3.6"]
 
     steps:
       - name: Checkout code
