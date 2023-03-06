@@ -1,53 +1,35 @@
-name: Docker MongoDB Image CI
+name: MongoDB Docker Image Based On Amazon Linux 2 CI
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: "version"
-        required: true
-        default: "4.0"
-        type: choice
-        options:
-          - "6.0"
-          - "5.0"
-          - "4.4"
-          - "4.2"
-          - "4.0"
-          - "3.6"
     schedule:
-      - cron: "0 1 * * *"
+      - cron: "30 1 * * *"
+
+env:
+  MONGODB_VERSIONS: "['6.0', '5.0', '4.4', '4.2']"
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      needs-updating-1: ${{ steps.check-1.outputs.needs-updating }}
-      needs-updating-2: ${{ steps.check-2.outputs.needs-updating }}
+      needs-updating: ${{ steps.check.outputs.needs-updating }}
     steps:
-      - name: Check if Alpine update available
-        if: github.event.inputs.version <= 4.0
-        id: check-1
-        uses: lucacome/docker-image-update-checker@v1
-        with:
-          base-image: alpine:latest
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:${{ github.event.inputs.version }}
-          platforms: linux/amd64
-      - name: Check if Amazon Linux update available
-        if: github.event.inputs.version >= 4.2
-        id: check-2
+      - name: Check if Amazon Linux 2 update available
+        id: check
         uses: lucacome/docker-image-update-checker@v1
         with:
           base-image: amazonlinux:2
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:${{ github.event.inputs.version }}
+          image: ${{ secrets.DOCKER_USERNAME }}/mongo:4.2
           platforms: linux/amd64
 
   build:
     needs: check
     runs-on: ubuntu-latest
-    if: |
-      needs.check.outputs.needs-updating-1 == 'true' ||
-      needs.check.outputs.needs-updating-2 == 'true'
+    if: needs.check.outputs.needs-updating == 'true'
+
+    strategy:
+      matrix:
+        version: ${{ fromJson(env.MONGODB_VERSIONS) }}
 
     steps:
       - name: Checkout code
@@ -58,7 +40,7 @@ jobs:
         run: |
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=mongo
-          VERSION=${{ github.event.inputs.version }}
+          VERSION=${{ matrix.version }}
           TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}"
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
@@ -78,19 +60,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push MongoDB's Docker image (based on Alpine)
-        if: github.event.inputs.version <= 4.0
-        uses: docker/build-push-action@v4
-        with:
-          context: ./${{ steps.prepare.outputs.image_name }}
-          file: ./${{ steps.prepare.outputs.image_name }}/alpine/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64
-          build-args: ${{ steps.prepare.outputs.build_args }}
-          tags: ${{ steps.prepare.outputs.tags }}
-
       - name: Build and push MongoDB's Docker image (based on Amazon Linux 2)
-        if: github.event.inputs.version >= 4.2
         uses: docker/build-push-action@v4
         with:
           context: ./${{ steps.prepare.outputs.image_name }}
