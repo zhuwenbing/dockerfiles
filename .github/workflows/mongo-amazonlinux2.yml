@@ -2,8 +2,8 @@ name: MongoDB Docker Image Based On Amazon Linux 2 CI
 
 on:
   workflow_dispatch:
-    schedule:
-      - cron: "30 1 * * *"
+  schedule:
+    - cron: "30 1 * * *"
 
 jobs:
   check:
