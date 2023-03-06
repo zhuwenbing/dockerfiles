@@ -6,7 +6,7 @@ on:
       - cron: "0 1 * * *"
 
 env:
-  MONGODB_VERSIONS: "['4.0', '3.6']"
+  MONGODB_VERSIONS: '["4.0", "3.6"]'
 
 jobs:
   check:
