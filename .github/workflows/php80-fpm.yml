@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Check if update available
         id: run
-        uses: lucacome/docker-image-update-checker@v1
+        uses: lucacome/docker-image-update-checker@v1.2.1
         with:
           base-image: php:8.0-fpm-alpine
           image: ${{ secrets.DOCKER_USERNAME }}/php:8.0-fpm
