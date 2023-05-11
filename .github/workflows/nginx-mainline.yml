@@ -17,7 +17,6 @@ jobs:
         with:
           base-image: nginx:mainline-alpine
           image: ${{ secrets.DOCKER_USERNAME }}/nginx:mainline
-          platforms: linux/amd64
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result

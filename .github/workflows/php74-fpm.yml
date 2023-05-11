@@ -17,7 +17,6 @@ jobs:
         with:
           base-image: php:7.4-fpm-alpine
           image: ${{ secrets.DOCKER_USERNAME }}/php:7.4-fpm
-          platforms: linux/amd64
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result
