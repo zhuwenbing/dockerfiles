@@ -15,7 +15,7 @@ jobs:
         id: run
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
-          base-image: nginx:mainline-alpine
+          base-image: library/nginx:mainline-alpine
           image: ${{ secrets.DOCKER_USERNAME }}/nginx:mainline
         continue-on-error: true
         if: github.event_name == 'schedule'

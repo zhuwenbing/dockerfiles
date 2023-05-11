@@ -15,7 +15,7 @@ jobs:
         id: run
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
-          base-image: php:7.0-fpm-alpine
+          base-image: library/php:7.0-fpm-alpine
           image: ${{ secrets.DOCKER_USERNAME }}/php:7.0-fpm
         continue-on-error: true
         if: github.event_name == 'schedule'

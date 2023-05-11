@@ -15,7 +15,7 @@ jobs:
         id: run
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
-          base-image: amazonlinux:2
+          base-image: library/amazonlinux:2
           image: ${{ secrets.DOCKER_USERNAME }}/mongo:4.2
         continue-on-error: true
         if: github.event_name == 'schedule'
