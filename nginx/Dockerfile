@@ -53,3 +53,6 @@ FROM --platform=$TARGETPLATFORM nginx:$NGINX_BUILD_VERSION-alpine
 COPY --from=builder \
     /tmp/nginx-${NGINX_VERSION}/objs/*_module.so \
     /usr/lib/nginx/modules/
+RUN apk add --no-cache libmaxminddb; \
+    rm -rf /var/cache/apk/*; \
+    rm -rf /tmp/*
