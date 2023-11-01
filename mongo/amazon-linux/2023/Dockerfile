@@ -63,6 +63,7 @@ RUN set -euxo pipefail; \
       gzip \
       shadow-utils \
       tar \
+      --exclude=dnf --exclude=systemd \
     ; \
     dnf clean all; \
     rm -rf /tmp/*
