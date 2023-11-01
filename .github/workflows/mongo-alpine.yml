@@ -16,7 +16,7 @@ jobs:
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
           base-image: library/alpine:latest
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:3.6
+          image: ${{ secrets.DOCKER_USERNAME }}/mongo:3.6-alpine
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result
@@ -50,7 +50,7 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=mongo
           VERSION=${{ matrix.version }}
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}"
+          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine"
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT

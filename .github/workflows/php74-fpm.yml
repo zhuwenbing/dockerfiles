@@ -16,7 +16,7 @@ jobs:
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
           base-image: library/php:7.4-fpm-alpine
-          image: ${{ secrets.DOCKER_USERNAME }}/php:7.4-fpm
+          image: ${{ secrets.DOCKER_USERNAME }}/php:7.4-fpm-alpine
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result
@@ -46,7 +46,7 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=php
           VERSION=7.4
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm"
+          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm-alpine"
           echo "build_args=PHP_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
