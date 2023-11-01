@@ -43,7 +43,7 @@ RUN set -euxo pipefail; \
     curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}.asc"; \
     gpg --verify /usr/local/bin/gosu.asc; \
     rm /usr/local/bin/gosu.asc; \
-    rm -r /root/.gnupg/; \
+    rm -rf /root/.gnupg/; \
     chmod +x /usr/local/bin/gosu; \
     # Verify that the binary works
     gosu --version; \
