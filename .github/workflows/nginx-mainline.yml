@@ -46,7 +46,7 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=nginx
           VERSION=mainline
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine,${REPOSITORY}/${IMAGE_NAME}:alpine,${REPOSITORY}/${IMAGE_NAME}:latest"
+          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION},${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine,${REPOSITORY}/${IMAGE_NAME}:alpine,${REPOSITORY}/${IMAGE_NAME}:latest"
           echo "build_args=NGINX_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT

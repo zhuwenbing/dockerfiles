@@ -46,7 +46,7 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=php
           VERSION=7.0
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm-alpine"
+          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm,${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm-alpine"
           echo "build_args=PHP_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT

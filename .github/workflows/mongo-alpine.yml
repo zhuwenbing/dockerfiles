@@ -50,10 +50,9 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=mongo
           VERSION=${{ matrix.version }}
+          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION},${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine"
           if [[ ${{ matrix.version }} == '4.0' ]]; then
-            TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine,${REPOSITORY}/${IMAGE_NAME}:alpine"
-          else
-            TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine"
+            TAGS+=",${REPOSITORY}/${IMAGE_NAME}:alpine"
           fi
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
