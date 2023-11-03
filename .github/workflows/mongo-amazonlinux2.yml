@@ -16,7 +16,7 @@ jobs:
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
           base-image: library/amazonlinux:2
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:4.2-amzn2
+          image: ${{ secrets.DOCKER_USERNAME }}/mongo:amzn2
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result
@@ -50,7 +50,11 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=mongo
           VERSION=${{ matrix.version }}
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-amzn2"
+          if [[ ${{ matrix.version }} == '7.0' ]]; then
+            TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-amzn2,${REPOSITORY}/${IMAGE_NAME}:amzn2,${REPOSITORY}/${IMAGE_NAME}:latest"
+          else
+            TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-amzn2"
+          fi
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
