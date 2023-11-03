@@ -53,7 +53,6 @@ jobs:
           TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION},${REPOSITORY}/${IMAGE_NAME}:${VERSION}-amzn2"
           if [[ ${{ matrix.version }} == '7.0' ]]; then
             TAGS+=",${REPOSITORY}/${IMAGE_NAME}:amzn2,${REPOSITORY}/${IMAGE_NAME}:latest"
-          else
           fi
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
