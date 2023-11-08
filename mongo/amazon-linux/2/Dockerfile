@@ -27,6 +27,10 @@ RUN set -euxo pipefail; \
     # backwards compat
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
     ln -s /usr/local/bin/docker-healthcheck.sh /healthcheck.sh; \
+    # Update
+    yum clean all; \
+    yum makecache fast; \
+    yum update -y; \
     # Install gosu.  https://github.com/tianon/gosu
     gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
     curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}"; \
@@ -39,9 +43,6 @@ RUN set -euxo pipefail; \
     gosu --version; \
     gosu nobody true; \
     # Install mongodb.
-    yum clean all; \
-    yum makecache fast; \
-    yum update -y; \
     yum install -y --setopt=protected_multilib=false \
         gzip \
         shadow-utils \
