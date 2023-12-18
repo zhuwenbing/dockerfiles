@@ -5,8 +5,7 @@ LABEL maintainer="Mr. Chu"
 ARG MONGO_BUILD_VERSION=4.0
 
 ENV MONGODB_VERSION=$MONGO_BUILD_VERSION-latest \
-    GLIBC_VERSION=2.33-r0 \
-    GOSU_VERSION=1.16
+    GOSU_VERSION=1.17
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 COPY check.sh /usr/local/bin/docker-healthcheck.sh
@@ -42,6 +41,16 @@ RUN set -euxo pipefail; \
     # verify that the binary works
     gosu --version; \
     gosu nobody true; \
+    cd /tmp; \
+    # Install glibc
+    echo 'https://storage.sev.monster/alpine/edge/testing' | tee -a /etc/apk/repositories; \
+    curl -SLO https://storage.sev.monster/alpine/edge/testing/x86_64/sevmonster-keys-1-r0.apk; \
+    apk add --allow-untrusted ./sevmonster-keys-1-r0.apk; \
+    apk update; \
+    apk add gcompat; \
+    rm /lib/ld-linux-x86-64.so.2; \
+    apk add --force-overwrite glibc; \
+    apk add glibc-bin; \
     # Install mongodb.
     apk add --no-cache \
         curl \
@@ -50,20 +59,6 @@ RUN set -euxo pipefail; \
         tzdata \
     ; \
     addgroup -S mongodb && adduser -S mongodb -G mongodb; \
-    cd /tmp; \
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub; \
-    curl -SLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk; \
-    #apk add --allow-untrusted glibc-${GLIBC_VERSION}.apk; \
-    # 2022/11/17 - Fix error. See: https://github.com/sgerrand/alpine-pkg-glibc/issues/185
-    apk add --force-overwrite glibc-${GLIBC_VERSION}.apk; \
-    apk fix --force-overwrite alpine-baselayout-data; \
-    # Eliminate '/usr/glibc-compat/lib/ld-linux-x86-64.so.2 is not a symbolic link' tips.
-    mv /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /usr/glibc-compat/lib/ld-linux-x86-64.so; \
-    ln -s /usr/glibc-compat/lib/ld-linux-x86-64.so /usr/glibc-compat/lib/ld-linux-x86-64.so.2; \
-    curl -SLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk; \
-    #apk add --allow-untrusted glibc-bin-${GLIBC_VERSION}.apk; \
-    apk add glibc-bin-${GLIBC_VERSION}.apk; \
-    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib; \
     mkdir -p mongodb-linux-x86_64; \
     curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-x86_64 --strip-components 1; \
     mv mongodb-linux-x86_64/bin/mongo mongodb-linux-x86_64/bin/mongod /usr/local/bin/; \
