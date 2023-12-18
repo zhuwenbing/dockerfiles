@@ -60,7 +60,9 @@ RUN set -euxo pipefail; \
     # Install mongodb.
     addgroup -S mongodb && adduser -S mongodb -G mongodb; \
     mkdir -p mongodb-linux-x86_64; \
-    wget http://downloads.mongodb.org/linux/mongodb-linux-x86_64-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-x86_64 --strip-components 1; \
+    apk add --no-cache curl; \
+    curl -SLo- http://downloads.mongodb.org/linux/mongodb-linux-x86_64-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-x86_64 --strip-components 1; \
+    apk del curl; \
     mv mongodb-linux-x86_64/bin/mongo mongodb-linux-x86_64/bin/mongod /usr/local/bin/; \
     rm -rf /var/cache/apk/*; \
     rm -rf /tmp/*
