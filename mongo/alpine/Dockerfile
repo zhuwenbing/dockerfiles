@@ -17,6 +17,8 @@ RUN set -euxo pipefail; \
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh; \
     ln -s /usr/local/bin/docker-healthcheck.sh /healthcheck.sh; \
     echo 'https://storage.sev.monster/alpine/edge/testing' | tee -a /etc/apk/repositories; \
+    wget https://storage.sev.monster/alpine/edge/testing/x86_64/sevmonster-keys-1-r0.apk; \
+    apk add --allow-untrusted ./sevmonster-keys-1-r0.apk; \
     apk update; \
     if ! command -v ps > /dev/null; then \
       apk add --no-cache procps; \
@@ -49,8 +51,6 @@ RUN set -euxo pipefail; \
     gosu nobody true; \
     cd /tmp; \
     # Install glibc
-    wget https://storage.sev.monster/alpine/edge/testing/x86_64/sevmonster-keys-1-r0.apk; \
-    apk add --allow-untrusted ./sevmonster-keys-1-r0.apk; \
     apk add gcompat; \
     rm /lib/ld-linux-x86-64.so.2; \
     apk add --force-overwrite glibc; \
