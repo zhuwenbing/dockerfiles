@@ -5,10 +5,10 @@ LABEL maintainer="Mr. Chu"
 ADD root.tgz /
 COPY CentOS-Base.repo epel.repo /etc/yum.repos.d/
 
-RUN set -ex; \
-    yum clean all; \
-    yum makecache fast; \
-    yum update -y; \
+RUN set -ex && \
+    yum clean all && \
+    yum makecache fast && \
+    yum update -y && \
     yum install -y --setopt=protected_multilib=false \
         ld-linux.so.2 \
         libstdc++.so.5 \
@@ -21,11 +21,11 @@ RUN set -ex; \
         xulrunner.i686 \
         xorg-x11-fonts-ISO8859-2-75dpi.noarch \
         wqy-zenhei-fonts.noarch \
-    ; \
-    cd /tmp/; \
-    curl -SL https://raw.githubusercontent.com/zhuwenbing/jdk-installers/master/6/jdk-6u45-linux-amd64.rpm -o jdk-6u45-linux-amd64.rpm; \
-    yum localinstall -y jdk-6u45-linux-amd64.rpm; \
-    yum clean all; \
+    && \
+    cd /tmp/ && \
+    curl -SL https://raw.githubusercontent.com/zhuwenbing/jdk-installers/master/6/jdk-6u45-linux-amd64.rpm -o jdk-6u45-linux-amd64.rpm && \
+    yum localinstall -y jdk-6u45-linux-amd64.rpm && \
+    yum clean all && \
     rm -rf /tmp/*;
 
 ENV LANG=en_US.UTF-8 \
