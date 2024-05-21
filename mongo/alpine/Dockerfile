@@ -19,7 +19,7 @@ RUN set -euxo pipefail && \
     # Update and install dependences
     apk update && \
     if ! command -v ps > /dev/null; then \
-      apk add --no-cache procps && \
+      apk add --no-cache procps; \
     fi && \
     apk add --no-cache \
         libgcc \
