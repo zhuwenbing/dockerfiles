@@ -17,7 +17,7 @@ RUN set -eux && \
     # install core extensions
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
-    docker-php-ext-install -j$(nproc) gd pdo_mysql pdo_pgsql pgsql zip && \
+    docker-php-ext-install -j$(nproc) gd pdo_mysql pdo_pgsql zip && \
     apk del .build-deps && \
     apk add --update \
         freetype \
