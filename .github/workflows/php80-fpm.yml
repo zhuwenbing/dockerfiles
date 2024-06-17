@@ -66,7 +66,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push (PHP 8.0 FPM) Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./${{ steps.prepare.outputs.image_name }}
           file: ./${{ steps.prepare.outputs.image_name }}/Dockerfile
