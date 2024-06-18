@@ -73,7 +73,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push MongoDB's Docker image (based on Amazon Linux 2)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./${{ steps.prepare.outputs.image_name }}
           file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux/2/Dockerfile
