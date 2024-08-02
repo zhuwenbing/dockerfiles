@@ -23,6 +23,7 @@ RUN apk update && \
 
 # 配置和安装 PHP 扩展
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
+    docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
     docker-php-ext-install -j$(nproc) \
         bz2 \
         bcmath \
@@ -31,7 +32,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
         fileinfo \
         gd \
         mbstring \
-        mysqli \
         opcache \
         pcntl \
         pdo \
