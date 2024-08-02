@@ -80,7 +80,7 @@ COPY --from=builder /usr/src/iyuuplus /var/www/iyuuplus
 WORKDIR /var/www/iyuuplus
 
 # 设置数据卷
-VOLUME /var/www/
+VOLUME /var/www/iyuuplus
 
 # 设置启动命令为运行 start.php
-CMD ["php", "start.php"]
+CMD ["php", "start.php", "start"]
