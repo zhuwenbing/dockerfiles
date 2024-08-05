@@ -1,12 +1,15 @@
-# 第一阶段：构建阶段
 ARG PHP_BUILD_VERSION=8.3-fpm-alpine
 
-FROM --platform=$TARGETPLATFORM php:$PHP_BUILD_VERSION AS builder
+FROM --platform=$TARGETPLATFORM php:$PHP_BUILD_VERSION
 
-# 安装构建依赖
-RUN apk update && \
-    apk add --no-cache --update linux-headers ${PHPIZE_DEPS} && \
-    apk add \
+LABEL maintainer="Mr. Chu"
+
+RUN set -eux && \
+    apk upgrade --update && \
+    # 安装构建依赖
+    apk add --no-cache --virtual .build-deps \
+        ${PHPIZE_DEPS} \
+        linux-headers \
         curl-dev \
         freetype-dev \
         git \
@@ -19,10 +22,10 @@ RUN apk update && \
         libzip-dev \
         oniguruma-dev \
         sqlite-dev \
-        zlib-dev
-
-# 配置和安装 PHP 扩展
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
+        zlib-dev \
+    && \
+    # 配置和安装 PHP 扩展
+    docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
     docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
     docker-php-ext-configure pcntl --enable-pcntl && \
     docker-php-ext-install -j$(nproc) \
@@ -44,21 +47,17 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
         sockets \
         sodium \
         xml \
-        zip
-
-# 安装 event 扩展（https://pecl.php.net/package/event）
-RUN pecl install event-3.1.4 && \
-    docker-php-ext-enable --ini-name zz-event.ini event
-
-# 下载应用程序代码
-RUN git clone https://github.com/ledccn/iyuuplus-dev.git /usr/src/iyuuplus
-
-# 第二阶段：生成最终的运行镜像
-FROM --platform=$TARGETPLATFORM php:$PHP_BUILD_VERSION
-
-# 安装运行时依赖项
-RUN apk update && \
-    apk add --no-cache \
+        zip \
+    && \
+    # 安装 event 扩展（https://pecl.php.net/package/event）
+    pecl install event-3.1.4 && \
+    docker-php-ext-enable --ini-name zz-event.ini event && \
+    # 下载应用程序代码
+    git clone https://github.com/ledccn/iyuuplus-dev.git /var/www/iyuuplus && \
+    # 移除构建依赖
+    apk del .build-deps && \
+    # 安装运行时依赖项
+    apk add --no-cache --update \
         freetype \
         libevent \
         libjpeg \
@@ -69,13 +68,11 @@ RUN apk update && \
         libzip \
         oniguruma \
         sqlite \
-        zlib
-
-# 复制第一阶段中安装的 PHP 扩展
-COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
-
-# 拷贝应用程序代码
-COPY --from=builder /usr/src/iyuuplus /var/www/iyuuplus
+        zlib \
+    && \
+    # 清理apk缓存和临时数据
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/*
 
 # 设置工作目录
 WORKDIR /var/www/iyuuplus
