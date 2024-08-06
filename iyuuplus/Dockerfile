@@ -2,7 +2,7 @@ ARG PHP_VERSION=8.3
 
 ARG PECL_EVENT_VERSION=3.1.4
 
-FROM --platform=$TARGETPLATFORM php:$PHP_VERSION-fpm-alpine
+FROM php:$PHP_VERSION-fpm-alpine
 
 LABEL maintainer="Mr. Chu"
 
@@ -52,7 +52,7 @@ RUN set -eux && \
         zip \
     && \
     # 安装 event 扩展（https://pecl.php.net/package/event）
-    pecl install event-${PECL_EVENT_VERSION} && \
+    pecl install event-$PECL_EVENT_VERSION && \
     docker-php-ext-enable --ini-name zz-event.ini event && \
     # 下载应用程序代码
     git clone https://github.com/ledccn/iyuuplus-dev.git /var/www/iyuuplus && \

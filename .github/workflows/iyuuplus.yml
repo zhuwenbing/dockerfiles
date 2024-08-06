@@ -24,7 +24,7 @@ jobs:
         run: |
           # 使用 curl 或者 wget 获取 iyuuplus-dev 仓库的 .version 文件内容
           version=$(curl -sS https://raw.githubusercontent.com/ledccn/iyuuplus-dev/master/.version)
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Compare versions
         id: compare_versions
@@ -32,10 +32,10 @@ jobs:
           current_version=$(cat ./${{ env.IMAGE_NAME }}/.version)
           if [ "$current_version" != "${{ steps.get_version.outputs.version }}" ]; then
             echo "Versions differ, triggering Docker build..."
-            echo "::set-output name=version_changed::true"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
           else
             echo "Versions are the same, no action needed."
-            echo "::set-output name=version_changed::false"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up output for subsequent jobs
