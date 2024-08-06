@@ -101,6 +101,6 @@ jobs:
         run: |
           new_version=${{ needs.check.outputs.version }}
           echo "$new_version" > ./${{ steps.prepare.outputs.image_name }}/.version
-          git add .version
+          git add ./${{ steps.prepare.outputs.image_name }}/.version
           git commit -m "Updated version to $new_version"
-          git push origin main
+          git push origin master
