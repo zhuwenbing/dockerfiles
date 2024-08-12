@@ -51,8 +51,6 @@ jobs:
         run: |
           TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.PHP_VERSION }}-${{ env.VERSION }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.PHP_VERSION }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
           echo "build_args=PHP_VERSION=${{ env.PHP_VERSION }}" >> $GITHUB_OUTPUT
-          echo "image_name=${{ env.IMAGE_NAME }}" >> $GITHUB_OUTPUT
-          echo "version=${{ env.VERSION }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
@@ -71,8 +69,8 @@ jobs:
       - name: Build and push (IYUUPlus PHP Environment) Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}
-          file: ./${{ steps.prepare.outputs.image_name }}/Dockerfile
+          context: ./iyuuplus
+          file: ./iyuuplus/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           build-args: ${{ steps.prepare.outputs.build_args }}
