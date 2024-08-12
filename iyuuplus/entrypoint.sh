@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 REPO_DIR="/app/iyuuplus"
 GIT_REPO="https://github.com/ledccn/iyuuplus-dev.git"

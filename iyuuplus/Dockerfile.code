@@ -9,7 +9,7 @@ RUN set -eux && \
     # backwards compat
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh && \
     apk upgrade --update && \
-    apk add --no-cache bash git && \
+    apk add --no-cache git && \
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
 
