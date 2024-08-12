@@ -1,0 +1,16 @@
+FROM alpine
+
+LABEL maintainer="Mr. Chu"
+
+COPY entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+RUN set -eux && \
+    chmod +x /usr/local/bin/docker-entrypoint.sh && \
+    # backwards compat
+    ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh && \
+    apk upgrade --update && \
+    apk add --no-cache bash git && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/*
+
+ENTRYPOINT [ "docker-entrypoint.sh" ]

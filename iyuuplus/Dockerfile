@@ -1,6 +1,6 @@
 ARG PHP_VERSION=8.3
 
-FROM php:$PHP_VERSION-fpm-alpine
+FROM php:$PHP_VERSION-alpine
 
 LABEL maintainer="Mr. Chu"
 
@@ -12,19 +12,14 @@ RUN set -eux && \
     apk add --no-cache --virtual .build-deps \
         ${PHPIZE_DEPS} \
         linux-headers \
-        curl-dev \
         freetype-dev \
-        git \
         libevent-dev \
         libjpeg-turbo-dev \
         libpng-dev \
-        libsodium-dev \
         libwebp-dev \
         libxml2-dev \
         libzip-dev \
-        oniguruma-dev \
-        sqlite-dev \
-        zlib-dev \
+        openssl-dev \
     && \
     # 配置和安装 PHP 扩展
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
@@ -33,54 +28,41 @@ RUN set -eux && \
     docker-php-ext-install -j$(nproc) \
         bz2 \
         bcmath \
-        curl \
         dom \
         fileinfo \
         gd \
-        mbstring \
         opcache \
         pcntl \
         pdo \
         pdo_mysql \
-        pdo_sqlite \
         phar \
         posix \
         simplexml \
         sockets \
-        sodium \
         xml \
         zip \
     && \
     # 安装 event 扩展（https://pecl.php.net/package/event）
     pecl install event-${PECL_EVENT_VERSION} && \
     docker-php-ext-enable --ini-name zz-event.ini event && \
-    # 下载应用程序代码
-    git clone https://github.com/ledccn/iyuuplus-dev.git /var/www/iyuuplus && \
     # 移除构建依赖
     apk del .build-deps && \
     # 安装运行时依赖项
     apk add --no-cache --update \
         freetype \
+        git \
         libevent \
         libjpeg \
         libpng \
-        libsodium \
         libwebp \
-        libxml2 \
         libzip \
-        oniguruma \
-        sqlite \
         zlib \
     && \
+    # 解决 git 命令可能无法在以下目录中执行 pull 等操作问题
+    git config --global --add safe.directory /var/www/html && \
     # 清理apk缓存和临时数据
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
 
 # 设置工作目录
-WORKDIR /var/www/iyuuplus
-
-# 设置数据卷
-VOLUME /var/www/iyuuplus
-
-# 设置启动命令为运行 start.php
-CMD ["php", "start.php", "start"]
+WORKDIR /var/www/html
