@@ -4,11 +4,13 @@ FROM php:$PHP_VERSION-alpine
 
 LABEL maintainer="Mr. Chu"
 
+COPY entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
 ARG PECL_EVENT_VERSION=3.1.4
 
 RUN set -eux && \
     apk upgrade --update && \
-    # 安装构建依赖
+    # Install build dependencies
     apk add --no-cache --virtual .build-deps \
         ${PHPIZE_DEPS} \
         linux-headers \
@@ -21,7 +23,7 @@ RUN set -eux && \
         libzip-dev \
         openssl-dev \
     && \
-    # 配置和安装 PHP 扩展
+    # Configure and install PHP extensions
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
     docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
     docker-php-ext-configure pcntl --enable-pcntl && \
@@ -42,13 +44,13 @@ RUN set -eux && \
         xml \
         zip \
     && \
-    # 安装 event 扩展（https://pecl.php.net/package/event）
+    # Install event extension (https://pecl.php.net/package/event)
     pecl install event-${PECL_EVENT_VERSION} && \
     docker-php-ext-enable --ini-name zz-event.ini event && \
-    # 移除构建依赖
+    # Remove build dependencies
     apk del .build-deps && \
-    # 安装运行时依赖项
-    apk add --no-cache --update \
+    # Install runtime dependencies
+    apk add --no-cache \
         freetype \
         git \
         libevent \
@@ -58,11 +60,11 @@ RUN set -eux && \
         libzip \
         zlib \
     && \
-    # 解决 git 命令可能无法在以下目录中执行 pull 等操作问题
-    git config --global --add safe.directory /var/www/html && \
-    # 清理apk缓存和临时数据
+    chmod +x /usr/local/bin/docker-entrypoint.sh && \
+    # Backwards compat
+    ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh && \
+    # Clean
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
 
-# 设置工作目录
-WORKDIR /var/www/html
+ENTRYPOINT [ "docker-entrypoint.sh" ]

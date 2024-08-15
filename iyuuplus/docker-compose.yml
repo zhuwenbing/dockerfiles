@@ -9,30 +9,14 @@ networks:
     name: my-bridge
 
 services:
-  iyuuplus-code:
-    container_name: iyuuplus-code
-    image: kissice/iyuuplus-code
-    networks:
-      my_bridge: null
-    volumes:
-    - iyuuplus_code:/app/iyuuplus:rw
-
   iyuuplus:
-    command: ["php", "start.php", "start"]
     container_name: iyuuplus
     depends_on:
-      iyuuplus-code:
-        condition: service_completed_successfully
       mysql:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-cqS", "--spider", "http://127.0.0.1:8787/"]
-    image: kissice/iyuuplus-php
-    logging:
-      driver: json-file
-      options:
-        max-file: "3"
-        max-size: 5m
+    image: kissice/iyuuplus
     networks:
       my_bridge:
         aliases:
@@ -41,9 +25,9 @@ services:
     - "3131:3131"
     - "8787:8787"
     - "8788:8788"
-    restart: always
+    restart: unless-stopped
     volumes:
-    - iyuuplus_code:/var/www/html:rw
+    - iyuuplus:/app/iyuuplus:rw
 
   mysql:
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -59,11 +43,6 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
     image: mysql:8.4
-    logging:
-      driver: json-file
-      options:
-        max-file: "3"
-        max-size: 5m
     networks:
       my_bridge:
         aliases:
@@ -83,7 +62,7 @@ secrets:
     file: ~/.docker/datas/mysql/mysql-root-password
 
 volumes:
-  iyuuplus_code:
-    name: iyuuplus-code
+  iyuuplus:
+    name: iyuuplus
   mysql:
     name: mysql

@@ -1,13 +1,14 @@
-name: IYUUPlus Code Getter Docker Image CI
+name: IYUUPlus Docker Image CI
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 13 * * *"
+    - cron: "0 13 * * *"
 
 env:
+  PHP_VERSION: "8.3"
   DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
-  IMAGE_NAME: iyuuplus-code
+  IMAGE_NAME: iyuuplus
 
 jobs:
   check:
@@ -15,12 +16,12 @@ jobs:
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
     steps:
-      - name: Check if Alpine update available
+      - name: Check if update available
         id: run
         uses: lucacome/docker-image-update-checker@v1.2.1
         with:
-          base-image: library/alpine:latest
-          image: ${{ secrets.DOCKER_USERNAME }}/iyuuplus-code:alpine
+          base-image: library/php:${{ env.PHP_VERSION }}-alpine
+          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:alpine
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result
@@ -48,6 +49,7 @@ jobs:
         id: prepare
         run: |
           TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:alpine,${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "build_args=PHP_VERSION=${{ env.PHP_VERSION }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
@@ -63,13 +65,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push (IYUUPlus Code Getter) Docker image
+      - name: Build and push (IYUUPlus) Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./iyuuplus
-          file: ./iyuuplus/Dockerfile.code
+          context: ./${{ env.IMAGE_NAME }}
+          file: ./${{ env.IMAGE_NAME }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
+          build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
 
       - name: Clear
