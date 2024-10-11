@@ -22,7 +22,7 @@ RUN set -euxo pipefail && \
     ln -s /usr/local/bin/docker-healthcheck.sh /healthcheck.sh && \
     # Update
     yum clean all && \
-    yum makecache fast && \
+    yum makecache && \
     yum update -y && \
     # Install gosu.  https://github.com/tianon/gosu
     gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
@@ -52,7 +52,7 @@ RUN set -euxo pipefail && \
     if [ -f mongo ]; then \
       mv mongo /usr/local/bin/; \
     else \
-      curl -SL https://github.com/mongodb-js/mongosh/releases/download/v${MONGOSH_VERSION}/mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm && \
+      curl -SLo- https://github.com/mongodb-js/mongosh/releases/download/v${MONGOSH_VERSION}/mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm && \
       yum localinstall -y mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm; \
     fi && \
     yum remove -y \
