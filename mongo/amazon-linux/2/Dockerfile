@@ -60,6 +60,7 @@ RUN set -euxo pipefail && \
       tar \
     && \
     yum clean all && \
+    rm -rf /var/cache/yum && \
     rm -rf /tmp/*
 
 VOLUME [ "/data/db" ]
