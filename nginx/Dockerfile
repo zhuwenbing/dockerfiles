@@ -1,6 +1,6 @@
 ARG NGINX_BUILD_VERSION=stable
 
-FROM --platform=$TARGETPLATFORM nginx:$NGINX_BUILD_VERSION-alpine AS builder
+FROM nginx:$NGINX_BUILD_VERSION-alpine AS builder
 
 # nginx:xxx-alpine contains NGINX_VERSION environment variable, like so:
 # ENV NGINX_VERSION 1.23.2
@@ -48,7 +48,7 @@ RUN set -euxo pipefail && \
     /bin/sh -c "./configure $CONFARGS --with-compat --add-dynamic-module=/tmp/ngx_brotli --add-dynamic-module=/tmp/headers-more-nginx-module --add-dynamic-module=/tmp/ngx_http_geoip2_module" && \
     make modules
 
-FROM --platform=$TARGETPLATFORM nginx:$NGINX_BUILD_VERSION-alpine
+FROM nginx:$NGINX_BUILD_VERSION-alpine
 # Extract the dynamic modules from the builder image
 COPY --from=builder \
     /tmp/nginx-${NGINX_VERSION}/objs/*_module.so \

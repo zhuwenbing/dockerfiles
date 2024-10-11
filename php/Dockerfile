@@ -1,6 +1,6 @@
 ARG PHP_BUILD_VERSION=8.0
 
-FROM --platform=$TARGETPLATFORM php:$PHP_BUILD_VERSION-fpm-alpine
+FROM php:$PHP_BUILD_VERSION-fpm-alpine
 
 LABEL maintainer="Mr. Chu"
 
