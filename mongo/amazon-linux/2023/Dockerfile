@@ -1,10 +1,11 @@
-FROM --platform=$TARGETPLATFORM amazonlinux:2
+FROM --platform=$TARGETPLATFORM amazonlinux:2023
 
 LABEL maintainer="Mr. Chu"
 
 ARG TARGETARCH
 
-ARG MONGO_BUILD_VERSION=4.2
+# Amazon Linux 2023 only supports MongoDB starting from version 5.0.
+ARG MONGO_BUILD_VERSION=5.0
 
 ENV MONGODB_VERSION=$MONGO_BUILD_VERSION-latest \
     GOSU_VERSION=1.17 \
