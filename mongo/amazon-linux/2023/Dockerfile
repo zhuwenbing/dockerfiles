@@ -24,8 +24,9 @@ RUN set -euxo pipefail && \
     dnf clean all && \
     dnf makecache && \
     dnf update -y && \
+    # gpg: keyserver receive failed: No dirmngr -> https://github.com/amazonlinux/amazon-linux-2023/issues/243
+    dnf swap gnupg2-minimal gnupg2 && \
     # Install gosu.  https://github.com/tianon/gosu
-    dnf install -y dirmngr && \
     gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
     curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}" && \
     curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}.asc" && \
