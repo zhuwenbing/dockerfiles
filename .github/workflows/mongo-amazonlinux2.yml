@@ -57,6 +57,11 @@ jobs:
           if [[ ${{ matrix.version }} =~ ^(4\.4|4\.2|4\.0|3\.6)$ ]]; then
             TAGS+=",${REPOSITORY}/${IMAGE_NAME}:${VERSION}"
           fi
+          PLATFORMS=linux/amd64,linux/arm64/v8
+          if [[ ${{ matrix.version }} =~ ^(4\.0|3\.6)$ ]]; then
+            PLATFORMS=linux/amd64
+          fi
+          echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
@@ -81,7 +86,7 @@ jobs:
           context: ./${{ steps.prepare.outputs.image_name }}
           file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux/2/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64/v8
+          platforms: ${{ steps.prepare.outputs.platforms }}
           build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
 
