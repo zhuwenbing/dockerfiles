@@ -39,8 +39,6 @@ RUN set -euxo pipefail && \
     gosu nobody true && \
     # Install mongodb.
     dnf install -y --setopt=protected_multilib=false \
-        gzip \
-        shadow-utils \
         tar \
         tzdata \
     && \
@@ -48,7 +46,7 @@ RUN set -euxo pipefail && \
     ARCHITECTURE= && \
     if [ "$TARGETARCH" = "amd64" ] ; then ARCHITECTURE="x86_64" ; else ARCHITECTURE="aarch64" ; fi && \
     cd /tmp && mkdir -p mongodb-linux-${ARCHITECTURE} && \
-    curl -SLo- https://fastdl.mongodb.org/linux/mongodb-linux-${ARCHITECTURE}-amazon2-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-${ARCHITECTURE} --strip-components 1 && \
+    curl -SLo- https://fastdl.mongodb.org/linux/mongodb-linux-${ARCHITECTURE}-amazon2023-v${MONGODB_VERSION}.tgz | tar xz -C ./mongodb-linux-${ARCHITECTURE} --strip-components 1 && \
     cd mongodb-linux-${ARCHITECTURE}/bin && \
     mv mongod /usr/local/bin/ && \
     if [ -f mongo ]; then \
@@ -58,8 +56,6 @@ RUN set -euxo pipefail && \
       dnf localinstall -y mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm; \
     fi && \
     dnf remove -y \
-      gzip \
-      shadow-utils \
       tar \
     && \
     dnf clean all && \
