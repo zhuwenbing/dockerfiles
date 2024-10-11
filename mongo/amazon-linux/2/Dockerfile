@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM amazonlinux:2
+FROM amazonlinux:2
 
 LABEL maintainer="Mr. Chu"
 
@@ -51,7 +51,7 @@ RUN set -euxo pipefail && \
     if [ -f mongo ]; then \
       mv mongo /usr/local/bin/; \
     else \
-      curl -SLo- https://github.com/mongodb-js/mongosh/releases/download/v${MONGOSH_VERSION}/mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm && \
+      curl -SL -o mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm https://github.com/mongodb-js/mongosh/releases/download/v${MONGOSH_VERSION}/mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm && \
       yum localinstall -y mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm; \
     fi && \
     yum remove -y \

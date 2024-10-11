@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM amazonlinux:2023
+FROM amazonlinux:2023
 
 LABEL maintainer="Mr. Chu"
 
@@ -21,10 +21,11 @@ RUN set -euxo pipefail && \
     ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh && \
     ln -s /usr/local/bin/docker-healthcheck.sh /healthcheck.sh && \
     # Update
-    yum clean all && \
-    yum makecache && \
-    yum update -y && \
+    dnf clean all && \
+    dnf makecache && \
+    dnf update -y && \
     # Install gosu.  https://github.com/tianon/gosu
+    dnf install -y dirmngr && \
     gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
     curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}" && \
     curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}.asc" && \
@@ -36,7 +37,7 @@ RUN set -euxo pipefail && \
     gosu --version && \
     gosu nobody true && \
     # Install mongodb.
-    yum install -y --setopt=protected_multilib=false \
+    dnf install -y --setopt=protected_multilib=false \
         gzip \
         shadow-utils \
         tar \
@@ -52,15 +53,15 @@ RUN set -euxo pipefail && \
     if [ -f mongo ]; then \
       mv mongo /usr/local/bin/; \
     else \
-      curl -SLo- https://github.com/mongodb-js/mongosh/releases/download/v${MONGOSH_VERSION}/mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm && \
-      yum localinstall -y mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm; \
+      curl -SL -o mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm https://github.com/mongodb-js/mongosh/releases/download/v${MONGOSH_VERSION}/mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm && \
+      dnf localinstall -y mongodb-mongosh-${MONGOSH_VERSION}.${ARCHITECTURE}.rpm; \
     fi && \
-    yum remove -y \
+    dnf remove -y \
       gzip \
       shadow-utils \
       tar \
     && \
-    yum clean all && \
+    dnf clean all && \
     rm -rf /tmp/*
 
 VOLUME [ "/data/db" ]
