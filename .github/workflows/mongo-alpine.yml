@@ -50,7 +50,7 @@ jobs:
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=mongo
           VERSION=${{ matrix.version }}
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION},${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine"
+          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine"
           if [[ ${{ matrix.version }} == '4.0' ]]; then
             TAGS+=",${REPOSITORY}/${IMAGE_NAME}:alpine"
           fi

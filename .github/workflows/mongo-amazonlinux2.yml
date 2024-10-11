@@ -38,7 +38,7 @@ jobs:
 
     strategy:
       matrix:
-        version: ["8.0", "7.0", "6.0", "5.0", "4.4", "4.2"]
+        version: ["8.0", "7.0", "6.0", "5.0", "4.4", "4.2", "4.0", "3.6"]
 
     steps:
       - name: Checkout code
@@ -54,7 +54,7 @@ jobs:
           if [[ ${{ matrix.version }} == '8.0' ]]; then
             TAGS+=",${REPOSITORY}/${IMAGE_NAME}:amzn2"
           fi
-          if [[ ${{ matrix.version }} == '4.4' || ${{ matrix.version }} == '4.2' ]]; then
+          if [[ ${{ matrix.version }} =~ ^(4\.4|4\.2|4\.0|3\.6)$ ]]; then
             TAGS+=",${REPOSITORY}/${IMAGE_NAME}:${VERSION}"
           fi
           echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
