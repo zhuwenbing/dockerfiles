@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Check if update available
         id: run
-        uses: lucacome/docker-image-update-checker@v1.2.1
+        uses: lucacome/docker-image-update-checker@v2.0.0
         with:
           base-image: library/php:${{ env.PHP_VERSION }}-alpine
           image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:alpine
