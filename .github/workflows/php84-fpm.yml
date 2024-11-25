@@ -1,4 +1,4 @@
-name: PHP 8.3 FPM Docker Image CI
+name: PHP 8.4 FPM Docker Image CI
 
 on:
   workflow_dispatch:
@@ -15,8 +15,8 @@ jobs:
         id: run
         uses: lucacome/docker-image-update-checker@v2.0.0
         with:
-          base-image: library/php:8.3-fpm-alpine
-          image: ${{ secrets.DOCKER_USERNAME }}/php:8.3-fpm-alpine
+          base-image: library/php:8.4-fpm-alpine
+          image: ${{ secrets.DOCKER_USERNAME }}/php:8.4-fpm-alpine
         continue-on-error: true
         if: github.event_name == 'schedule'
       - name: Check on result
@@ -45,7 +45,7 @@ jobs:
         run: |
           REPOSITORY=${{ secrets.DOCKER_USERNAME }}
           IMAGE_NAME=php
-          VERSION=8.3
+          VERSION=8.4
           TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm,${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm-alpine,${REPOSITORY}/${IMAGE_NAME}:fpm-alpine,${REPOSITORY}/${IMAGE_NAME}:fpm"
           echo "build_args=PHP_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push (PHP 8.3 FPM) Docker image
+      - name: Build and push (PHP 8.4 FPM) Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./${{ steps.prepare.outputs.image_name }}
