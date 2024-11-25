@@ -3,7 +3,7 @@ name: IYUUPlus Docker Image CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 13 * * *"
+    - cron: "30 4 * * *"
 
 env:
   PHP_VERSION: "8.3"

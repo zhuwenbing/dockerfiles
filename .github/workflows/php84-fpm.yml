@@ -3,7 +3,7 @@ name: PHP 8.4 FPM Docker Image CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 7 * * *"
+    - cron: "0 4 * * *"
 
 jobs:
   check:
