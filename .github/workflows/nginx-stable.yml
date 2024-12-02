@@ -9,8 +9,8 @@ env:
   BASE_IMAGE: nginx
   VERSION: stable
   DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
-  IMAGE_NAME: ${BASE_IMAGE}
-  BASE_TAG_NAME: ${VERSION}-alpine
+  IMAGE_NAME: nginx
+  BASE_TAG_NAME: stable-alpine
 
 jobs:
   check:

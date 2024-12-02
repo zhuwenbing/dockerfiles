@@ -8,11 +8,11 @@ on:
 env:
   BASE_IMAGE: php
   DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
-  IMAGE_NAME: ${BASE_IMAGE}
+  IMAGE_NAME: php
   VERSION: "5.6"
   MODE_NAME: fpm
   BASE_SYSTEM: alpine
-  BASE_TAG_NAME: ${VERSION}-${MODE_NAME}-${BASE_SYSTEM}
+  BASE_TAG_NAME: 5.6-fpm-alpine
 
 jobs:
   check:
