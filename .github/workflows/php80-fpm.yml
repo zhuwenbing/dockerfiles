@@ -3,22 +3,33 @@ name: PHP 8.0 FPM Docker Image CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 4 * * *"
+    - cron: "30 3 * * *"
+
+env:
+  BASE_IMAGE: php
+  DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
+  IMAGE_NAME: ${BASE_IMAGE}
+  VERSION: "8.0"
+  MODE_NAME: fpm
+  BASE_SYSTEM: alpine
+  BASE_TAG_NAME: ${VERSION}-${MODE_NAME}-${BASE_SYSTEM}
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
+
     steps:
       - name: Check if update available
         id: run
         uses: lucacome/docker-image-update-checker@v2.0.0
         with:
-          base-image: library/php:8.0-fpm-alpine
-          image: ${{ secrets.DOCKER_USERNAME }}/php:8.0-fpm-alpine
+          base-image: library/${{ env.BASE_IMAGE }}:${{ env.BASE_TAG_NAME }}
+          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}
         continue-on-error: true
         if: github.event_name == 'schedule'
+
       - name: Check on result
         id: check
         run: |
@@ -43,13 +54,8 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          REPOSITORY=${{ secrets.DOCKER_USERNAME }}
-          IMAGE_NAME=php
-          VERSION=8.0
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm,${REPOSITORY}/${IMAGE_NAME}:${VERSION}-fpm-alpine"
-          echo "build_args=PHP_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}-${{ env.MODE_NAME }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}"
+          echo "build_args=BASE_TAG_NAME=${{ env.BASE_TAG_NAME }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
@@ -68,8 +74,8 @@ jobs:
       - name: Build and push (PHP 8.0 FPM) Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}
-          file: ./${{ steps.prepare.outputs.image_name }}/Dockerfile
+          context: ./${{ env.IMAGE_NAME }}
+          file: ./${{ env.IMAGE_NAME }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           build-args: ${{ steps.prepare.outputs.build_args }}

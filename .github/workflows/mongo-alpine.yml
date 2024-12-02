@@ -5,20 +5,27 @@ on:
   schedule:
     - cron: "0 1 * * *"
 
+env:
+  BASE_IMAGE: alpine
+  DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
+  IMAGE_NAME: mongo
+
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
+
     steps:
       - name: Check if Alpine update available
         id: run
         uses: lucacome/docker-image-update-checker@v2.0.0
         with:
-          base-image: library/alpine:latest
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:alpine
+          base-image: library/${{ env.BASE_IMAGE }}:latest
+          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_IMAGE }}
         continue-on-error: true
         if: github.event_name == 'schedule'
+
       - name: Check on result
         id: check
         run: |
@@ -47,16 +54,11 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          REPOSITORY=${{ secrets.DOCKER_USERNAME }}
-          IMAGE_NAME=mongo
-          VERSION=${{ matrix.version }}
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-alpine"
+          TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}-${{ env.BASE_IMAGE }}"
           if [[ ${{ matrix.version }} == '4.0' ]]; then
-            TAGS+=",${REPOSITORY}/${IMAGE_NAME}:alpine"
+            TAGS+=",${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_IMAGE }}"
           fi
-          echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "build_args=MONGO_BUILD_VERSION=${{ matrix.version }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
@@ -75,8 +77,8 @@ jobs:
       - name: Build and push MongoDB's Docker image (based on Alpine)
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}
-          file: ./${{ steps.prepare.outputs.image_name }}/alpine/Dockerfile
+          context: ./${{ env.IMAGE_NAME }}
+          file: ./${{ env.IMAGE_NAME }}/${{ env.BASE_IMAGE }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
           build-args: ${{ steps.prepare.outputs.build_args }}

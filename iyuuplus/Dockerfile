@@ -1,6 +1,6 @@
-ARG PHP_VERSION=8.3
+ARG BASE_TAG_NAME=8.3-alpine
 
-FROM php:$PHP_VERSION-alpine
+FROM php:$BASE_TAG_NAME
 
 LABEL maintainer="Mr. Chu"
 

@@ -5,20 +5,28 @@ on:
   schedule:
     - cron: "20 1 * * *"
 
+env:
+  BASE_IMAGE: amazonlinux
+  DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
+  IMAGE_NAME: mongo
+  BASE_TAG_NAME: amzn2
+
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
+
     steps:
       - name: Check if Amazon Linux 2 update available
         id: run
         uses: lucacome/docker-image-update-checker@v2.0.0
         with:
-          base-image: library/amazonlinux:2
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:amzn2
+          base-image: library/${{ env.BASE_IMAGE }}:2
+          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}
         continue-on-error: true
         if: github.event_name == 'schedule'
+
       - name: Check on result
         id: check
         run: |
@@ -47,24 +55,19 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          REPOSITORY=${{ secrets.DOCKER_USERNAME }}
-          IMAGE_NAME=mongo
-          VERSION=${{ matrix.version }}
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION}-amzn2"
+          TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}-${{ env.BASE_TAG_NAME }}"
           if [[ ${{ matrix.version }} == '8.0' ]]; then
-            TAGS+=",${REPOSITORY}/${IMAGE_NAME}:amzn2"
+            TAGS+=",${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}"
           fi
           if [[ ${{ matrix.version }} =~ ^(4\.4|4\.2|4\.0|3\.6)$ ]]; then
-            TAGS+=",${REPOSITORY}/${IMAGE_NAME}:${VERSION}"
+            TAGS+=",${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}"
           fi
           PLATFORMS=linux/amd64,linux/arm64/v8
           if [[ ${{ matrix.version }} =~ ^(4\.0|3\.6)$ ]]; then
             PLATFORMS=linux/amd64
           fi
           echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
-          echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "build_args=MONGO_BUILD_VERSION=${{ matrix.version }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
@@ -83,8 +86,8 @@ jobs:
       - name: Build and push MongoDB's Docker image (based on Amazon Linux 2)
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}
-          file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux/2/Dockerfile
+          context: ./${{ env.IMAGE_NAME }}
+          file: ./${{ env.IMAGE_NAME }}/${{ env.BASE_IMAGE }}/2/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: ${{ steps.prepare.outputs.platforms }}
           build-args: ${{ steps.prepare.outputs.build_args }}

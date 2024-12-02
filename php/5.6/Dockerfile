@@ -9,8 +9,8 @@ RUN set -eux && \
         freetype-dev \
         libjpeg-turbo-dev \
         libpng-dev \
-        libpq-dev \
         libzip-dev \
+        postgresql-dev \
     && \
     # install core extensions
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
@@ -22,9 +22,9 @@ RUN set -eux && \
         freetype \
         libjpeg \
         libpng \
-        libpq \
         libzip \
         fcgi \
+        postgresql \
     && \
     # clean
     rm -rf /var/cache/apk/* && \

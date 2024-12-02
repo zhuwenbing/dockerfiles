@@ -1,6 +1,6 @@
-ARG PHP_BUILD_VERSION=8.0
+ARG BASE_TAG_NAME=8.0-fpm-alpine
 
-FROM php:$PHP_BUILD_VERSION-fpm-alpine
+FROM php:$BASE_TAG_NAME
 
 LABEL maintainer="Mr. Chu"
 

@@ -3,27 +3,30 @@ name: IYUUPlus Docker Image CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 13 * * *"
+    - cron: "30 4 * * *"
 
 env:
-  PHP_VERSION: "8.3"
+  BASE_IMAGE: php
   DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
   IMAGE_NAME: iyuuplus
+  BASE_TAG_NAME: 8.3-alpine
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
+
     steps:
       - name: Check if update available
         id: run
         uses: lucacome/docker-image-update-checker@v2.0.0
         with:
-          base-image: library/php:${{ env.PHP_VERSION }}-alpine
-          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:alpine
+          base-image: library/${{ env.BASE_IMAGE }}:${{ env.BASE_TAG_NAME }}
+          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_IMAGE }}-${{ env.BASE_TAG_NAME }}
         continue-on-error: true
         if: github.event_name == 'schedule'
+
       - name: Check on result
         id: check
         run: |
@@ -48,8 +51,8 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:alpine,${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
-          echo "build_args=PHP_VERSION=${{ env.PHP_VERSION }}" >> $GITHUB_OUTPUT
+          TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_IMAGE }}-${{ env.BASE_TAG_NAME }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "build_args=BASE_TAG_NAME=${{ env.BASE_TAG_NAME }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU

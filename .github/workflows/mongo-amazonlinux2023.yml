@@ -5,20 +5,28 @@ on:
   schedule:
     - cron: "40 1 * * *"
 
+env:
+  BASE_IMAGE: amazonlinux
+  DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
+  IMAGE_NAME: mongo
+  BASE_TAG_NAME: amzn2023
+
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
+
     steps:
       - name: Check if Amazon Linux 2023 update available
         id: run
         uses: lucacome/docker-image-update-checker@v2.0.0
         with:
-          base-image: library/amazonlinux:2023
-          image: ${{ secrets.DOCKER_USERNAME }}/mongo:amzn2023
+          base-image: library/${{ env.BASE_IMAGE }}:2023
+          image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}
         continue-on-error: true
         if: github.event_name == 'schedule'
+
       - name: Check on result
         id: check
         run: |
@@ -47,16 +55,11 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          REPOSITORY=${{ secrets.DOCKER_USERNAME }}
-          IMAGE_NAME=mongo
-          VERSION=${{ matrix.version }}
-          TAGS="${REPOSITORY}/${IMAGE_NAME}:${VERSION},${REPOSITORY}/${IMAGE_NAME}:${VERSION}-amzn2023"
+          TAGS="${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}-${{ env.BASE_TAG_NAME }}"
           if [[ ${{ matrix.version }} == '8.0' ]]; then
-            TAGS+=",${REPOSITORY}/${IMAGE_NAME}:amzn2023,${REPOSITORY}/${IMAGE_NAME}:latest"
+            TAGS+=",${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }},${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest"
           fi
-          echo "build_args=MONGO_BUILD_VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "build_args=MONGO_BUILD_VERSION=${{ matrix.version }}" >> $GITHUB_OUTPUT
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
@@ -75,8 +78,8 @@ jobs:
       - name: Build and push MongoDB's Docker image (based on Amazon Linux 2023)
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ steps.prepare.outputs.image_name }}
-          file: ./${{ steps.prepare.outputs.image_name }}/amazon-linux/2023/Dockerfile
+          context: ./${{ env.IMAGE_NAME }}
+          file: ./${{ env.IMAGE_NAME }}/${{ env.BASE_IMAGE }}/2023/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64/v8
           build-args: ${{ steps.prepare.outputs.build_args }}
