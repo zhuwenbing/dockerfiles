@@ -4,12 +4,12 @@ LABEL maintainer="Mr. Chu"
 
 ARG TARGETARCH
 
-# Amazon Linux 2023 only supports MongoDB starting from version 5.0.
+# According to the compressed package I can download, MongoDB only supports Amazon Linux 2023 starting from version 5.0.
 ARG MONGO_BUILD_VERSION=5.0
 
 ENV MONGODB_VERSION=$MONGO_BUILD_VERSION-latest \
     GOSU_VERSION=1.17 \
-    MONGOSH_VERSION=2.3.2
+    MONGOSH_VERSION=2.3.4
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 COPY check.sh /usr/local/bin/docker-healthcheck.sh
