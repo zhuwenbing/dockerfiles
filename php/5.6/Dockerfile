@@ -30,7 +30,7 @@ RUN set -eux && \
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/* && \
     # enable php fpm status page
-    echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
+    echo -e "pm.status_path = /status\naccess.log = /dev/null" >> /usr/local/etc/php-fpm.d/zz-docker.conf && \
     # install healthcheck
     wget -O /usr/local/bin/php-fpm-healthcheck https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck && \
     chmod +x /usr/local/bin/php-fpm-healthcheck
