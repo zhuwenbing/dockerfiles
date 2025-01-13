@@ -9,7 +9,7 @@ ARG MONGO_BUILD_VERSION=5.0
 
 ENV MONGODB_VERSION=$MONGO_BUILD_VERSION-latest \
     GOSU_VERSION=1.17 \
-    MONGOSH_VERSION=2.3.7
+    MONGOSH_VERSION=2.3.8
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 COPY check.sh /usr/local/bin/docker-healthcheck.sh
@@ -32,6 +32,7 @@ RUN set -euxo pipefail && \
     curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${TARGETARCH}.asc" && \
     gpg --verify /usr/local/bin/gosu.asc && \
     rm /usr/local/bin/gosu.asc && \
+    gpgconf --kill gpg-agent && \
     rm -r /root/.gnupg/ && \
     chmod +x /usr/local/bin/gosu && \
     # Verify that the binary works
