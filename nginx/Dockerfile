@@ -7,7 +7,7 @@ FROM nginx:${VERSION}-alpine-slim AS builder
 
 # ENV BROTLI_VERSION=1.0.0rc \
 #    HEADERS_MORE_VERSION=0.33
-ENV HEADERS_MORE_VERSION=0.37 \
+ENV HEADERS_MORE_VERSION=0.38 \
     GEOIP2_VERSION=3.4
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
@@ -23,7 +23,6 @@ RUN set -ex && \
         libxslt-dev \
         gd-dev \
         geoip-dev \
-        perl-dev \
         libedit-dev \
         bash \
         alpine-sdk \
