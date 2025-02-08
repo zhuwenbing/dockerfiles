@@ -1,6 +1,6 @@
-ARG BASE_TAG_NAME=stable-alpine
+ARG VERSION=stable
 
-FROM nginx:$BASE_TAG_NAME AS builder
+FROM nginx:${VERSION}-alpine-slim AS builder
 
 # nginx:xxx-alpine contains NGINX_VERSION environment variable, like so:
 # ENV NGINX_VERSION 1.23.2
@@ -44,11 +44,11 @@ RUN set -euxo pipefail && \
     CONFARGS=$(nginx -V 2>&1 | sed -n -e 's/^.*arguments: //p') && \
     cd /tmp/ngx_brotli && \
     git submodule update --init && \
-    cd /tmp/nginx-$NGINX_VERSION && \
-    /bin/sh -c "./configure $CONFARGS --with-compat --add-dynamic-module=/tmp/ngx_brotli --add-dynamic-module=/tmp/headers-more-nginx-module --add-dynamic-module=/tmp/ngx_http_geoip2_module" && \
+    cd /tmp/nginx-${NGINX_VERSION} && \
+    /bin/sh -c "./configure ${CONFARGS} --with-compat --add-dynamic-module=/tmp/ngx_brotli --add-dynamic-module=/tmp/headers-more-nginx-module --add-dynamic-module=/tmp/ngx_http_geoip2_module" && \
     make modules
 
-FROM nginx:$BASE_TAG_NAME
+FROM nginx:${VERSION}-alpine-slim
 # Extract the dynamic modules from the builder image
 COPY --from=builder \
     /tmp/nginx-${NGINX_VERSION}/objs/*_module.so \
