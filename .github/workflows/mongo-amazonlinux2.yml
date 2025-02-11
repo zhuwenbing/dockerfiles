@@ -97,3 +97,8 @@ jobs:
         if: always()
         run: |
           rm -rf ${HOME}/.docker/config.json
+
+      - name: Wait for 10 seconds
+        run: |
+          echo "Waiting for 10 seconds..."
+          sleep 10
