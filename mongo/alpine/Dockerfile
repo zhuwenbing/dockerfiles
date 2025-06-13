@@ -49,8 +49,8 @@ RUN set -euxo pipefail && \
     gosu nobody true && \
     cd /tmp && \
     # Install glibc
-    echo 'https://storage.sev.monster/alpine/edge/testing' | tee -a /etc/apk/repositories && \
-    wget https://storage.sev.monster/alpine/edge/testing/x86_64/sevmonster-keys-1-r0.apk && \
+    echo 'https://alpine.sev.monster/edge/testing' | tee -a /etc/apk/repositories && \
+    wget https://alpine.sev.monster/edge/testing/x86_64/sevmonster-keys-1-r0.apk && \
     apk add --allow-untrusted ./sevmonster-keys-1-r0.apk && \
     apk update && \
     apk add gcompat && \
