@@ -53,6 +53,7 @@ RUN set -euxo pipefail && \
     wget https://alpine.sev.monster/edge/testing/x86_64/sevmonster-keys-1-r0.apk && \
     apk add --allow-untrusted ./sevmonster-keys-1-r0.apk && \
     apk update && \
+    apk del gcompat && \
     apk add --force-overwrite glibc && \
     apk add glibc-bin && \
     # Install mongodb.
