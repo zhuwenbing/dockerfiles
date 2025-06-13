@@ -53,7 +53,6 @@ RUN set -euxo pipefail && \
     wget https://alpine.sev.monster/edge/testing/x86_64/sevmonster-keys-1-r0.apk && \
     apk add --allow-untrusted ./sevmonster-keys-1-r0.apk && \
     apk update && \
-    apk add gcompat && \
     rm /lib/ld-linux-x86-64.so.2 && \
     apk add --force-overwrite glibc && \
     apk add glibc-bin && \
