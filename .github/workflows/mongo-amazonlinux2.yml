@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Check if Amazon Linux 2 update available
         id: run
-        uses: lucacome/docker-image-update-checker@v2.0.0
+        uses: lucacome/docker-image-update-checker@v3.0.0
         with:
           base-image: library/${{ env.BASE_IMAGE }}:2
           image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}

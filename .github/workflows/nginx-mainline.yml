@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Check if update available
         id: run
-        uses: lucacome/docker-image-update-checker@v2.0.0
+        uses: lucacome/docker-image-update-checker@v3.0.0
         with:
           base-image: library/nginx:mainline-alpine-slim
           image: ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
