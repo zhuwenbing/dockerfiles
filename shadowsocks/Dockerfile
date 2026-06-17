@@ -1,11 +1,11 @@
-FROM alpine
+FROM alpine AS builder
 
 LABEL maintainer="Mr. Chu"
 
 RUN set -eux && \
     apk upgrade --update && \
     # Install build dependencies
-    apk add --no-cache --virtual .build-deps \
+    apk add --no-cache \
         build-base \
         cmake \
         c-ares-dev \
@@ -27,23 +27,10 @@ RUN set -eux && \
     make install && \
     cd /usr/local/bin && \
     ls /usr/local/bin/ss-* | xargs -n1 setcap cap_net_bind_service+ep && \
-    ls /usr/local/bin | grep -Ev 'ss-nat|ss-setup' | xargs strip && \
-    find /usr/local/bin -name 'ss-*' ! -name 'ss-server' -delete && \
-    # Remove build dependencies
-    apk del .build-deps && \
-    # Runtime dependencies setup
-    apk add --no-cache \
-        ca-certificates \
-        rng-tools \
-        tzdata \
-        $(scanelf --needed --nobanner /usr/local/bin/ss-server \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | sort -u) \
-    && \
-    cp /tmp/shadowsocks-libev/docker/alpine/entrypoint.sh /usr/local/bin/docker-entrypoint.sh && \
-    # Clean
-    rm -rf /var/cache/apk/* && \
-    rm -rf /tmp/*
+    ls /usr/local/bin | grep -Ev 'ss-nat|ss-setup' | xargs strip
+
+FROM alpine
+LABEL maintainer="Mr. Chu"
 
 ENV SERVER_ADDR=0.0.0.0
 ENV SERVER_PORT=8388
@@ -53,6 +40,24 @@ ENV TIMEOUT=300
 ENV DNS_ADDRS="8.8.8.8,8.8.4.4"
 ENV TZ=UTC
 ENV ARGS=
+
+COPY --from=builder /tmp/shadowsocks-libev/docker/alpine/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --from=builder /usr/local/bin/ss-server /usr/local/bin/
+
+RUN set -eux && \
+    apk upgrade --update && \
+    # Runtime dependencies setup
+    apk add --no-cache \
+        ca-certificates \
+        rng-tools \
+        tzdata \
+        $(scanelf --needed --nobanner /usr/local/bin/ss-server \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | sort -u) \
+    && \
+    # Clean
+    rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/*
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
