@@ -22,7 +22,7 @@ RUN set -eux && \
     git clone https://github.com/shadowsocks/shadowsocks-libev.git && \
     cd shadowsocks-libev && \
     git submodule update --init --recursive && \
-    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_TESTING=OFF -DWITH_STATIC=OFF -DCMAKE_BUILD_TYPE=Release && \
+    cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_TESTING=OFF -DWITH_STATIC=OFF -DCMAKE_BUILD_TYPE=Release && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd /usr/local/bin && \
