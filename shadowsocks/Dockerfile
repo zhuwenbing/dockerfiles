@@ -39,7 +39,7 @@ RUN set -eux && \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
             | sort -u) \
     && \
-    cp ./docker/alpine/entrypoint.sh /usr/local/bin/docker-entrypoint.sh && \
+    cp /tmp/shadowsocks-libev/docker/alpine/entrypoint.sh /usr/local/bin/docker-entrypoint.sh && \
     # Clean
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
