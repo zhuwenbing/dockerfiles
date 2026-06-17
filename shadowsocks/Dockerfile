@@ -14,7 +14,7 @@ RUN set -eux && \
         libev-dev \
         libsodium-dev \
         linux-headers \
-        mbedtls-dev \
+        mbedtls3-dev \
         pcre2-dev \
     && \
     # Build shadowsocks-libev
