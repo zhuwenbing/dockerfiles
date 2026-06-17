@@ -27,7 +27,7 @@ RUN set -eux && \
     make install && \
     cd /usr/local/bin && \
     ls /usr/local/bin/ss-* | xargs -n1 setcap cap_net_bind_service+ep && \
-    strip $(ls /usr/local/bin | grep -Ev 'ss-nat') && \
+    ls /usr/local/bin | grep -Ev 'ss-nat|ss-setup' | xargs strip && \
     # Remove build dependencies
     apk del .build-deps && \
     # Runtime dependencies setup
