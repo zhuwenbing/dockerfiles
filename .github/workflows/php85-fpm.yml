@@ -1,4 +1,4 @@
-name: PHP 8.4 FPM Docker Image CI
+name: PHP 8.5 FPM Docker Image CI
 
 on:
   workflow_dispatch:
@@ -9,10 +9,10 @@ env:
   BASE_IMAGE: php
   DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
   IMAGE_NAME: php
-  VERSION: "8.4"
+  VERSION: "8.5"
   MODE_NAME: fpm
   BASE_SYSTEM: alpine
-  BASE_TAG_NAME: 8.4-fpm-alpine
+  BASE_TAG_NAME: 8.5-fpm-alpine
 
 jobs:
   check:
@@ -71,13 +71,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push (PHP 8.4 FPM) Docker image
+      - name: Build and push (PHP 8.5 FPM) Docker image
         uses: docker/build-push-action@v7
         with:
           context: ./${{ env.IMAGE_NAME }}
           file: ./${{ env.IMAGE_NAME }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
+          platforms: linux/amd64,linux/arm64
           build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
 
