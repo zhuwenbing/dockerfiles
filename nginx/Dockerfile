@@ -7,7 +7,7 @@ FROM nginx:${VERSION}-alpine-slim AS builder
 
 # ENV BROTLI_VERSION=1.0.0rc \
 #    HEADERS_MORE_VERSION=0.33
-ENV HEADERS_MORE_VERSION=0.39 \
+ENV HEADERS_MORE_VERSION=0.40 \
     GEOIP2_VERSION=3.4
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile

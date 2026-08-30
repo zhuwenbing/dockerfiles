@@ -9,7 +9,7 @@ ARG MONGO_BUILD_VERSION=5.0
 
 ENV MONGODB_VERSION=$MONGO_BUILD_VERSION-latest \
     GOSU_VERSION=1.19 \
-    MONGOSH_VERSION=2.8.2
+    MONGOSH_VERSION=2.10.0
 
 COPY run.sh /usr/local/bin/docker-entrypoint.sh
 COPY check.sh /usr/local/bin/docker-healthcheck.sh

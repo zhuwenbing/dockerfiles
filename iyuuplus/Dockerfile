@@ -6,7 +6,7 @@ LABEL maintainer="Mr. Chu"
 
 COPY entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-ARG PECL_EVENT_VERSION=3.1.4
+ARG PECL_EVENT_VERSION=3.1.6
 
 RUN set -eux && \
     apk upgrade --update && \
