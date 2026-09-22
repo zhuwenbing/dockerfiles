@@ -17,10 +17,10 @@ RUN set -eux && \
         mbedtls3-dev \
         pcre2-dev \
     && \
-    # Build shadowsocks-libev
+    # Build shadowsocks-c
     cd /tmp && \
-    git clone https://github.com/shadowsocks/shadowsocks-libev.git && \
-    cd shadowsocks-libev && \
+    git clone https://github.com/shadowsocks/shadowsocks-c.git && \
+    cd shadowsocks-c && \
     git submodule update --init --recursive && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_TESTING=OFF -DWITH_STATIC=OFF -DCMAKE_BUILD_TYPE=Release && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
@@ -41,7 +41,7 @@ ENV DNS_ADDRS="8.8.8.8,8.8.4.4"
 ENV TZ=UTC
 ENV ARGS=
 
-COPY --from=builder /tmp/shadowsocks-libev/docker/alpine/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --from=builder /tmp/shadowsocks-c/docker/alpine/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY --from=builder /usr/local/bin/ss-server /usr/local/bin/
 
 RUN set -eux && \
