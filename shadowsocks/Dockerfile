@@ -6,22 +6,10 @@ RUN set -eux && \
     apk upgrade --update && \
     # Install build dependencies
     apk add --no-cache \
-        autoconf \
-        automake \
-        cmake \
         build-base \
-        libev-dev \
-        libtool \
-        linux-headers \
-        udns-dev \
-        libsodium-dev \
-        mbedtls-dev \
-        pcre-dev \
+        cmake \
         libcap \
-        tar \
-        udns-dev \
-        pcre2-dev \
-        c-ares-dev \
+        linux-headers \
         git \
     && \
     # Build shadowsocks-c
@@ -29,8 +17,7 @@ RUN set -eux && \
     git clone https://github.com/shadowsocks/shadowsocks-c.git && \
     cd shadowsocks-c && \
     git submodule update --init --recursive && \
-    cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_TESTING=OFF -DBUNDLED=ON -DWITH_STATIC=ON
- -DCMAKE_BUILD_TYPE=Release && \
+    cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_TESTING=OFF -DSS_BUILD_STATIC_LIBRARY=OFF -DSS_BUILD_SHARED_LIBRARY=OFF -DCMAKE_BUILD_TYPE=Release && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
     make install && \
     cd /usr/local/bin && \
