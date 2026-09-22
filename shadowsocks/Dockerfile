@@ -6,16 +6,23 @@ RUN set -eux && \
     apk upgrade --update && \
     # Install build dependencies
     apk add --no-cache \
-        build-base \
+        autoconf \
+        automake \
         cmake \
+        build-base \
+        libev-dev \
+        libtool \
+        linux-headers \
+        udns-dev \
+        libsodium-dev \
+        mbedtls-dev \
+        pcre-dev \
+        libcap \
+        tar \
+        udns-dev \
+        pcre2-dev \
         c-ares-dev \
         git \
-        libcap \
-        libev-dev \
-        libsodium-dev \
-        linux-headers \
-        mbedtls3-dev \
-        pcre2-dev \
     && \
     # Build shadowsocks-c
     cd /tmp && \
