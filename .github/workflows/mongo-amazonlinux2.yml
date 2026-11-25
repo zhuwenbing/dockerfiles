@@ -46,6 +46,7 @@ jobs:
 
     strategy:
       matrix:
+        # MongoDB 9.0+ no longer ships Amazon Linux 2 packages, so 8.0 is the highest version here.
         version: ["8.0", "7.0", "6.0", "5.0", "4.4", "4.2", "4.0", "3.6"]
 
     steps:
@@ -59,7 +60,8 @@ jobs:
           if [[ ${{ matrix.version }} == '8.0' ]]; then
             TAGS+=",${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_TAG_NAME }}"
           fi
-          if [[ ${{ matrix.version }} =~ ^(4\.4|4\.2|4\.0|3\.6)$ ]]; then
+          # Bare tags point to the newest base image available for that version.
+          if [[ ${{ matrix.version }} =~ ^(6\.0|5\.0|4\.4|4\.2|4\.0|3\.6)$ ]]; then
             TAGS+=",${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}"
           fi
           PLATFORMS=linux/amd64,linux/arm64/v8
@@ -92,6 +94,8 @@ jobs:
           platforms: ${{ steps.prepare.outputs.platforms }}
           build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Clear
         if: always()

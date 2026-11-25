@@ -80,6 +80,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           build-args: ${{ steps.prepare.outputs.build_args }}
           tags: ${{ steps.prepare.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Clear
         if: always()
