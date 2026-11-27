@@ -3,7 +3,7 @@ name: PHP 5.6 FPM Docker Image CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *"
+    - cron: "10 3 * * *"
 
 env:
   BASE_IMAGE: php
