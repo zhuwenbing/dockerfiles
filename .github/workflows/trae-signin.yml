@@ -83,8 +83,9 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     if: |
-      github.event_name != 'schedule' ||
-      needs.check.outputs.needs-updating == 'true'
+      always() &&
+      (github.event_name != 'schedule' ||
+       needs.check.outputs.needs-updating == 'true')
 
     steps:
       - name: Checkout code
